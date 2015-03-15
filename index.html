@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Welcome to Beached Island</title>
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
+  <script src="http://cdn.pubnub.com/pubnub-3.7.1.min.js"></script>
+<style type="text/css">
+  .chart-legend,.bar-legend,.line-legend,.pie-legend,.radar-legend,.polararea-legend,.doughnut-legend{list-style-type:none;margin-top:5px;text-align:center}.chart-legend li,.bar-legend li,.line-legend li,.pie-legend li,.radar-legend li,.polararea-legend li,.doughnut-legend li{display:inline-block;white-space:nowrap;position:relative;margin-bottom:4px;border-radius:5px;padding:2px 8px 2px 28px;font-size:smaller;cursor:default}.chart-legend li span,.bar-legend li span,.line-legend li span,.pie-legend li span,.radar-legend li span,.polararea-legend li span,.doughnut-legend li span{display:block;position:absolute;left:0;top:0;width:20px;height:20px;border-radius:5px}
+
+  ::selection{ background-color: #E13300; color: white; }
+  ::moz-selection{ background-color: #E13300; color: white; }
+  ::webkit-selection{ background-color: #E13300; color: white; }
+
+  body {
+    background-color: #fff;
+    margin: 40px;
+    font: 13px/20px normal Helvetica, Arial, sans-serif;
+    color: #4F5155;
+  }
+
+  a {
+    color: #003399;
+    background-color: transparent;
+    font-weight: normal;
+  }
+
+  h1 {
+    color: #444;
+    background-color: transparent;
+    border-bottom: 1px solid #D0D0D0;
+    font-size: 19px;
+    font-weight: normal;
+    margin: 0 0 14px 0;
+    padding: 14px 15px 10px 15px;
+  }
+
+  code {
+    font-family: Consolas, Monaco, Courier New, Courier, monospace;
+    font-size: 12px;
+    background-color: #f9f9f9;
+    border: 1px solid #D0D0D0;
+    color: #002166;
+    display: block;
+    margin: 14px 0 14px 0;
+    padding: 12px 10px 12px 10px;
+  }
+
+  #body{
+    margin: 0 15px 0 15px;
+  }
+
+  p.footer{
+    text-align: right;
+    font-size: 11px;
+    border-top: 1px solid #D0D0D0;
+    line-height: 32px;
+    padding: 0 10px 0 10px;
+    margin: 20px 0 0 0;
+  }
+
+  #container{
+    margin: 10px;
+    border: 1px solid #D0D0D0;
+    -webkit-box-shadow: 0 0 8px #D0D0D0;
+  }
+
+  .kraze{
+    height: 100px;
+    position: relative;
+    top: -6px;
+    left: -41px;
+  }
+
+  .graph{
+    margin:20px;
+    padding:5px;
+    width:500px;
+  }
+
+  #tach{
+    width:200px;
+    height:200px;
+  }
+  .gameContainer{
+    border:1px solid #ccc;
+    padding:10px;
+    float:right;
+    text-align:center;
+  }
+  strong{
+    font-weight:bold;
+  }
+</style>
+</head>
+<body ng-app="ngWink">
+
+  <div id="container" ng-controller="appController">
+    <h1>Wink</h1>
+    <div ng-if="accessToken">
+      <button ng-click="logout()">Logout</button>
+    </div>
+    <div ng-if="!accessToken">
+      <form ng-submit="login(email, password)">
+      Email: <input type="text" ng-model="email"></input>{{email}}<br>
+      Pass: &nbsp;<input type="password" ng-model="password"></input><br>
+      <input type="submit" value="Login" ></input>
+      </form>
+    </div>
+    <hr>
+    <div >
+      <div class="gameContainer" ng-if="devices">
+        <h2>Devices</h2>
+        <div class="device" ng-repeat="device in devices" ng-click="selectDevice($index)">
+           {{device.name}}
+        </div>
+      </div>
+      <div ng-if="selectedDevice">
+        <h2>{{selectedDevice.name}}</h2>
+        <div ng-repeat="(key,attr) in selectedDevice.desired_state">
+          {{key}}
+          <input ng-if="key=='brightness'" type="range" min="0" max="1" step="0.1" ng-model="selectedDevice.desired_state[key]"><span ng-if="key=='brightness'">{{selectedDevice.desired_state[key]*100}}%</span>
+          <input type="radio" ng-if="key=='powered'"  ng-model="selectedDevice.desired_state[key]" ng-value="true"><span ng-if="key=='powered'">On</span>
+          <input type="radio" ng-if="key=='powered'"  ng-model="selectedDevice.desired_state[key]" ng-value="false"><span ng-if="key=='powered'">Off</span>
+          <input type="text" ng-if="key!='powered'&&key!='brightness'" ng-model="[key]"></input>
+        </div>
+        <button ng-click="updateState()">Update</button>
+        <div ng-if="1==2" ng-repeat="(key,attr) in selectedDevice">
+          {{key}}-{{attr}}
+        </div>
+      </div>
+
+
+
+    </div>
+
+  </div>
+
+</body>
+
+<script>
+
+  /**
+  * @Author Jeff Bachand
+  */
+
+  angular.module('ngWink',['ngRoute'])
+  .config( function($routeProvider, $locationProvider) {
+  });
+
+
+  var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
+    $scope.devices = [];
+    $scope.accessToken = localStorage.accessToken || null;
+    $rootScope.selectedDevice = null;
+
+    var pubnub = PUBNUB;
+
+
+
+    $scope.selectDevice = function(idx){
+      if(typeof $scope.devices[idx] !== 'undefined' && $scope.devices[idx]){
+        $rootScope.selectedDevice = $scope.devices[idx];
+        pubnub.init({
+          subscribe_key: $rootScope.selectedDevice.subscription.pubnub.subscribe_key
+        }).subscribe({
+          channel : $rootScope.selectedDevice.subscription.pubnub.channel,
+          message : function(msg){
+            //console.log(msg)
+            $rootScope.selectedDevice.desired_state = JSON.parse(msg).desired_state;
+            console.log($rootScope.selectedDevice);
+            $scope.$apply();
+          }
+        });
+
+      }
+    };
+
+    $scope.logout = function(){
+      $scope.accessToken = null;
+      delete localStorage.accessToken;
+    };
+
+    $scope.updateState = function(){
+      var reqData = {
+        "desired_state":$rootScope.selectedDevice.desired_state
+      };
+
+      $http({
+        method: 'PUT',
+        url:"https://winkapi.quirky.com/light_bulbs/"+$rootScope.selectedDevice.light_bulb_id,
+        headers: {
+          "Authorization": "Bearer "+$scope.accessToken
+        },
+        data: reqData
+
+      }).
+      success(function(data){
+        console.log("success update");
+        console.log(data);
+
+      }).
+      error(function(data){
+        console.log("fail update");
+        console.log(data);
+      });
+    };
+
+
+
+
+    $scope.login = function(email, password){
+      console.log('login clicked');
+      var reqData = {
+        username:email,
+        password:password,
+        grant_type:"password",
+        client_secret:"ce609edf5e85015d393e7859a38056fe",
+        client_id:"quirky_wink_ios_app"
+      };
+
+      console.log(reqData);
+
+      $http({
+        method: 'POST',
+        url: "https://winkapi.quirky.com/oauth2/token/",
+        params: reqData
+      }).
+      success(function(data){
+        console.log("successful login");
+        $scope.accessToken = localStorage.accessToken = data.access_token;
+        $scope.getDevices();
+      }).
+      error(function(data){
+        console.log("failed login");
+        console.log(data);
+      });
+
+    };
+
+
+
+    $scope.getDevices = function(){
+
+      $http({
+        method: 'GET',
+        url: "https://winkapi.quirky.com/users/me/light_bulbs/",
+        headers: {
+          "Authorization": "Bearer "+$scope.accessToken
+        }
+      }).
+      success(function(data){
+        console.log("success devices");
+        console.log(data);
+        $scope.devices = data.data;
+        if($scope.devices.length>0){
+          $scope.selectDevice(0); //select the first device by default
+        }
+
+      }).
+      error(function(data){
+        console.log("fail devices must have a bad accessToken");
+        //$scope.accessToken = localStorage.accessToken = null;
+
+        console.log(data);
+      });
+
+    }
+
+    if($scope.accessToken){
+      $scope.getDevices();
+    };
+
+
+  }
+</script>
+</html>
