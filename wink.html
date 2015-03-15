@@ -7,6 +7,10 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
   <script src="http://cdn.pubnub.com/pubnub-3.7.1.min.js"></script>
+  <script src="//cdn.jsdelivr.net/alertify.js/0.4.0rc1/alertify.min.js"></script>
+  <link type="text/css" href="//cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
+    <link type="text/css" href="//cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
+
 <style type="text/css">
   .chart-legend,.bar-legend,.line-legend,.pie-legend,.radar-legend,.polararea-legend,.doughnut-legend{list-style-type:none;margin-top:5px;text-align:center}.chart-legend li,.bar-legend li,.line-legend li,.pie-legend li,.radar-legend li,.polararea-legend li,.doughnut-legend li{display:inline-block;white-space:nowrap;position:relative;margin-bottom:4px;border-radius:5px;padding:2px 8px 2px 28px;font-size:smaller;cursor:default}.chart-legend li span,.bar-legend li span,.line-legend li span,.pie-legend li span,.radar-legend li span,.polararea-legend li span,.doughnut-legend li span{display:block;position:absolute;left:0;top:0;width:20px;height:20px;border-radius:5px}
 
@@ -172,6 +176,7 @@
             $rootScope.selectedDevice.desired_state = JSON.parse(msg).desired_state;
             console.log($rootScope.selectedDevice);
             $scope.$apply();
+            alertify.log("Settings updated from outside application");
           }
         });
 
@@ -200,6 +205,7 @@
       success(function(data){
         console.log("success update");
         console.log(data);
+        alertify.success("Updated successfully");
 
       }).
       error(function(data){
@@ -232,6 +238,7 @@
         console.log("successful login");
         $scope.accessToken = localStorage.accessToken = data.access_token;
         $scope.getDevices();
+        alertify.success("Logged in successfully");
       }).
       error(function(data){
         console.log("failed login");
