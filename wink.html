@@ -8,96 +8,10 @@
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
   <script src="http://cdn.pubnub.com/pubnub-3.7.1.min.js"></script>
   <script src="//cdn.jsdelivr.net/alertify.js/0.4.0rc1/alertify.min.js"></script>
+  <link type="text/css" href="//cdn.jsdelivr.net/bootstrap/3.3.2/css/bootstrap-theme.css">
   <link type="text/css" href="//cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
     <link type="text/css" href="//cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
 
-<style type="text/css">
-  .chart-legend,.bar-legend,.line-legend,.pie-legend,.radar-legend,.polararea-legend,.doughnut-legend{list-style-type:none;margin-top:5px;text-align:center}.chart-legend li,.bar-legend li,.line-legend li,.pie-legend li,.radar-legend li,.polararea-legend li,.doughnut-legend li{display:inline-block;white-space:nowrap;position:relative;margin-bottom:4px;border-radius:5px;padding:2px 8px 2px 28px;font-size:smaller;cursor:default}.chart-legend li span,.bar-legend li span,.line-legend li span,.pie-legend li span,.radar-legend li span,.polararea-legend li span,.doughnut-legend li span{display:block;position:absolute;left:0;top:0;width:20px;height:20px;border-radius:5px}
-
-  ::selection{ background-color: #E13300; color: white; }
-  ::moz-selection{ background-color: #E13300; color: white; }
-  ::webkit-selection{ background-color: #E13300; color: white; }
-
-  body {
-    background-color: #fff;
-    margin: 40px;
-    font: 13px/20px normal Helvetica, Arial, sans-serif;
-    color: #4F5155;
-  }
- 
-  a {
-    color: #003399;
-    background-color: transparent;
-    font-weight: normal;
-  }
-
-  h1 {
-    color: #444;
-    background-color: transparent;
-    border-bottom: 1px solid #D0D0D0;
-    font-size: 19px;
-    font-weight: normal;
-    margin: 0 0 14px 0;
-    padding: 14px 15px 10px 15px;
-  }
-
-  code {
-    font-family: Consolas, Monaco, Courier New, Courier, monospace;
-    font-size: 12px;
-    background-color: #f9f9f9;
-    border: 1px solid #D0D0D0;
-    color: #002166;
-    display: block;
-    margin: 14px 0 14px 0;
-    padding: 12px 10px 12px 10px;
-  }
-
-  #body{
-    margin: 0 15px 0 15px;
-  }
-
-  p.footer{
-    text-align: right;
-    font-size: 11px;
-    border-top: 1px solid #D0D0D0;
-    line-height: 32px;
-    padding: 0 10px 0 10px;
-    margin: 20px 0 0 0;
-  }
-
-  #container{
-    margin: 10px;
-    border: 1px solid #D0D0D0;
-    -webkit-box-shadow: 0 0 8px #D0D0D0;
-  }
-
-  .kraze{
-    height: 100px;
-    position: relative;
-    top: -6px;
-    left: -41px;
-  }
-
-  .graph{
-    margin:20px;
-    padding:5px;
-    width:500px;
-  }
-
-  #tach{
-    width:200px;
-    height:200px;
-  }
-  .gameContainer{
-    border:1px solid #ccc;
-    padding:10px;
-    float:right;
-    text-align:center;
-  }
-  strong{
-    font-weight:bold;
-  }
-</style>
 </head>
 <body ng-app="ngWink">
 
@@ -135,13 +49,8 @@
           {{key}}-{{attr}}
         </div>
       </div>
-
-
-
     </div>
-
   </div>
-
 </body>
 
 <script>
