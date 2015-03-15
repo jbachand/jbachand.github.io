@@ -5,50 +5,162 @@
   <title>Welcome to Beached Island</title>
   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
-  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
   <script src="http://cdn.pubnub.com/pubnub-3.7.1.min.js"></script>
-  <script src="http://cdn.jsdelivr.net/alertify.js/0.4.0rc1/alertify.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
     <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css">
+<style>
+body{
+  background:url('http://i.imgur.com/Flc5Imv.jpg');
+}
+.modal-header h1{
+  color: #2AB1DD;
+  letter-spacing: 0.03em;
+  font-size: 50pt;
+  font-weight: 600;
+}
+.app{
+}
+.header{
+  background-color: #2AB1DD;
+  color: #FFF;
+  font-size: 40pt;
+  padding-left: 100px;
+  text-shadow: 1px 1px 1px #666;
+}
+.header .btn{
+  background-color:white;
+  color:#2AB1DD;
+  margin-right:50px;
+}
+.devices{
+  padding-left:50px;
+  padding-right:50px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding-top:10px;
+}
+.device{
+  display:inline-block;
+  text-align: center;
+  cursor:pointer;
+  text-transform: capitalize;
+  position:relative;
+}
+.device .percent{
+  position: absolute;
+  top: 40%;
+  left: 35%;
+  font-size: 20pt;
+  color: #FFF;
+  text-shadow: 1px 1px 1px #666;
+}
+.selectedDevice{
+  width:350px;
+  margin-right:100px;
+  border-radius:5px;
+  border:1px solid #ccc;
+  padding:20px;
+  text-transform: capitalize;
 
+}
+.selectedDevice h2{
+  margin-top:0px;
+}
+.toggle{
+  display: block;
+  position: absolute;
+}
+</style>
 </head>
 <body ng-app="ngWink">
 
   <div id="container" ng-controller="appController">
-    <h1>Wink</h1>
-    <div ng-if="accessToken">
-      <button ng-click="logout()">Logout</button>
-    </div>
+
+
     <div ng-if="!accessToken">
-      <form ng-submit="login(email, password)">
-      Email: <input type="text" ng-model="email"></input>{{email}}<br>
-      Pass: &nbsp;<input type="password" ng-model="password"></input><br>
-      <input type="submit" value="Login" ></input>
-      </form>
+
+      <div id="loginModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="text-center">Login
+                <img src="http://i.imgur.com/hoUF7sB.jpg" width="300px" >
+
+              </h1>
+            </div>
+            <div class="modal-body">
+              <form class="form col-md-12 center-block" ng-submit="login(email, password)">
+                <div class="form-group">
+                  <input type="text" class="form-control input-lg" placeholder="Email" ng-model="email">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control input-lg" placeholder="Password" ng-model="password">
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-primary btn-lg btn-block" value="Sign In">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <div class="col-md-12">
+                Login with your Wink Hub account information
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
     </div>
-    <hr>
-    <div >
-      <div class="gameContainer" ng-if="devices">
-        <h2>Devices</h2>
+
+    <div class="app" ng-if="accessToken" >
+      <div class="header">
+        Wink Hub Basic Controls
+        <div  class="pull-right">
+          <button class="btn btn-lg" ng-click="logout()">Logout</button>
+        </div>
+      </div>
+
+
+      <div  ng-if="devices" class="devices">
+
+        <h2>Lights</h2>
         <div class="device" ng-repeat="device in devices" ng-click="selectDevice($index)">
-           {{device.name}}
+          <h3>{{device.name}}</h3>
+          <img ng-if="device.desired_state.powered" src="http://i.imgur.com/BzbO9fq.gif">
+          <div class="percent" ng-if="device.desired_state.powered">{{device.desired_state.brightness*100}}%</div>
+          <img ng-if="!device.desired_state.powered" src="http://i.imgur.com/S2DoAu2.gif">
         </div>
+
+        <div ng-if="selectedDevice" class="pull-right selectedDevice">
+          <h2>{{selectedDevice.name}} <span ng-if="selectedDevice.desired_state.powered">- {{selectedDevice.desired_state.brightness*100}}%</span><span ng-if="!selectedDevice.desired_state.powered">- Off</span></h2>
+          <input ng-if="selectedDevice.desired_state.powered" type="range" min="0" max="1" step="0.01" ng-model="selectedDevice.desired_state.brightness">
+
+          <span class="toggle" ng-hide="!selectedDevice.inital_state">
+            <input  type="checkbox" class="onOff"  checked>
+          </span>
+          <span class="toggle" ng-hide="selectedDevice.inital_state">
+            <input  type="checkbox" class="onOff">
+          </span>
+
+          <div ng-repeat="(key,attr) in selectedDevice.desired_state">
+            <span ng-if="key!='powered'&&key!='brightness'">{{key}}</span>
+            <input type="text" ng-if="key!='powered'&&key!='brightness'" ng-model="[key]"></input>
+          </div>
+          <button ng-click="updateState()" class="btn btn-success pull-right">Update</button>
+          <div ng-if="1==2" ng-repeat="(key,attr) in selectedDevice">
+            {{key}}-{{attr}}
+          </div>
+        </div>
+
       </div>
-      <div ng-if="selectedDevice">
-        <h2>{{selectedDevice.name}}</h2>
-        <div ng-repeat="(key,attr) in selectedDevice.desired_state">
-          {{key}}
-          <input ng-if="key=='brightness'" type="range" min="0" max="1" step="0.1" ng-model="selectedDevice.desired_state[key]"><span ng-if="key=='brightness'">{{selectedDevice.desired_state[key]*100}}%</span>
-          <input type="radio" ng-if="key=='powered'"  ng-model="selectedDevice.desired_state[key]" ng-value="true"><span ng-if="key=='powered'">On</span>
-          <input type="radio" ng-if="key=='powered'"  ng-model="selectedDevice.desired_state[key]" ng-value="false"><span ng-if="key=='powered'">Off</span>
-          <input type="text" ng-if="key!='powered'&&key!='brightness'" ng-model="[key]"></input>
-        </div>
-        <button ng-click="updateState()">Update</button>
-        <div ng-if="1==2" ng-repeat="(key,attr) in selectedDevice">
-          {{key}}-{{attr}}
-        </div>
-      </div>
+
+
+
     </div>
   </div>
 </body>
@@ -73,9 +185,23 @@
 
 
 
+
+
     $scope.selectDevice = function(idx){
       if(typeof $scope.devices[idx] !== 'undefined' && $scope.devices[idx]){
         $rootScope.selectedDevice = $scope.devices[idx];
+        $rootScope.selectedDevice.inital_state = $rootScope.selectedDevice.desired_state.powered;
+        $timeout(function(){
+          $(".onOff").bootstrapSwitch();
+          $('.onOff').on('switchChange.bootstrapSwitch', function(event, state) {
+            console.log(state);
+            $rootScope.selectedDevice.desired_state.powered = state;
+            $scope.$apply();
+            $scope.updateState();
+            //$timeout(function(){$(".onOff").bootstrapSwitch();},300);
+          });
+        },300);
+
         pubnub.init({
           subscribe_key: $rootScope.selectedDevice.subscription.pubnub.subscribe_key
         }).subscribe({
@@ -85,7 +211,7 @@
             $rootScope.selectedDevice.desired_state = JSON.parse(msg).desired_state;
             console.log($rootScope.selectedDevice);
             $scope.$apply();
-            alertify.log("Settings updated from outside application");
+            //alertify.log("Settings updated from outside application");
           }
         });
 
@@ -114,7 +240,7 @@
       success(function(data){
         console.log("success update");
         console.log(data);
-        alertify.success("Updated successfully");
+        //alertify.success("Updated successfully");
 
       }).
       error(function(data){
@@ -147,7 +273,7 @@
         console.log("successful login");
         $scope.accessToken = localStorage.accessToken = data.access_token;
         $scope.getDevices();
-        alertify.success("Logged in successfully");
+        //alertify.success("Logged in successfully");
       }).
       error(function(data){
         console.log("failed login");
