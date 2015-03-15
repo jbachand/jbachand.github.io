@@ -1,5 +1,8 @@
 {
   "version" : "1.0",
+  "sessionAttributes" : {
+    "new" : true
+  },
   "response": {
     "outputSpeech" : {
       "type" : "PlainText",
