@@ -245,7 +245,8 @@ body{
       success(function(data){
         console.log("success update");
         console.log(data);
-        $scope.selectedDevice.hasUpdates = false;
+        $scope.selectedDevice.hasUpdates = false
+        $scope.$apply();
 
         //alertify.success("Updated successfully");
 
