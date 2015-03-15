@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <title>Welcome to Beached Island</title>
-  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
-  <script src="http://cdn.pubnub.com/pubnub-3.7.1.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
-<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
-    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css">
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
+  <script src="https://cdn.pubnub.com/pubnub-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css">
 <style>
 body{
-  background:url('http://i.imgur.com/Flc5Imv.jpg');
+  background:url('https://i.imgur.com/Flc5Imv.jpg');
 }
 .modal-header h1{
   color: #2AB1DD;
@@ -89,7 +89,7 @@ body{
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="text-center">Login
-                <img src="http://i.imgur.com/hoUF7sB.jpg" width="300px" >
+                <img src="https://i.imgur.com/hoUF7sB.jpg" width="300px" >
 
               </h1>
             </div>
@@ -132,9 +132,9 @@ body{
         <h2>Lights</h2>
         <div class="device" ng-repeat="device in devices" ng-click="selectDevice($index)">
           <h3>{{device.name}}</h3>
-          <img ng-if="device.desired_state.powered" src="http://i.imgur.com/BzbO9fq.gif">
+          <img ng-if="device.desired_state.powered" src="https://i.imgur.com/BzbO9fq.gif">
           <div class="percent" ng-if="device.desired_state.powered">{{device.desired_state.brightness*100 | number:0}}%</div>
-          <img ng-if="!device.desired_state.powered" src="http://i.imgur.com/S2DoAu2.gif">
+          <img ng-if="!device.desired_state.powered" src="https://i.imgur.com/S2DoAu2.gif">
         </div>
 
         <div ng-if="selectedDevice" class="pull-right selectedDevice">
