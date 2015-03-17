@@ -310,6 +310,7 @@ body{
     $scope.logout = function(){
       $scope.accessToken = null;
       delete localStorage.accessToken;
+      window.location.href=$scope.authEndpoint;
     };
 
     $scope.updateState = function(){
@@ -419,11 +420,9 @@ body{
       $scope.login(getParams.code);
     }
 
-    $scope.$watch('accessToken', function(){
-      if(!$scope.accessToken){
-        window.location.href=$scope.authEndpoint;
-      }
-    });
+    if(!$scope.accessToken){
+      window.location.href=$scope.authEndpoint;
+    }
 
     if($scope.accessToken){
       $scope.getDevices();
