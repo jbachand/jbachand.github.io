@@ -243,6 +243,7 @@ body{
     $scope.authEndpoint = "https://winkapi.quirky.com/oauth2/authorize?client_id=ffa784d28684daf13ea7f0c6dad7a03c&redirect_uri=https://jbachand.github.io/wink.html&state=login";
 
     var getParams = $location.search();
+    console.log(getParams);
     if(typeof getParams.code === 'string'){
       $scope.login(getParams.code);
     }
