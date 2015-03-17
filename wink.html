@@ -247,7 +247,9 @@ body{
     var getParams = $location.search();
     console.log(getParams);
 
-
+    if(!$scope.accessToken){
+      window.location.href=$scope.authEndpoint;
+    }
 
 
 
@@ -368,7 +370,6 @@ body{
         console.log(data);
         $scope.accessToken = data.access_token;
         localStorage.accessToken = data.access_token;
-        $scope.$apply();
         //$location.url($location.path());
         $scope.getDevices();
         //alertify.success("Logged in successfully");
@@ -422,9 +423,7 @@ body{
       $scope.login(getParams.code);
     }
 
-    if(!$scope.accessToken){
-      window.location.href=$scope.authEndpoint;
-    }
+
 
     if($scope.accessToken){
       $scope.getDevices();
