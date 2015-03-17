@@ -410,7 +410,7 @@ body{
       error(function(data){
         console.log("fail devices must have a bad accessToken");
         //$scope.accessToken = localStorage.accessToken = null;
-
+        $scope.updateStatus('error');
         console.log(data);
       });
 
