@@ -390,12 +390,19 @@ body{
 
     $scope.getDevices = function(){
 
+      var reqData = {
+        client_secret:"9f6c71f4edee1d4cdc987b485ae8c318",
+        client_id:"ffa784d28684daf13ea7f0c6dad7a03c"
+      };
+
+
       $http({
         method: 'GET',
         url: "https://winkapi.quirky.com/users/me/light_bulbs/",
         headers: {
           "Authorization": "Bearer "+$scope.accessToken
-        }
+        },
+        params: reqData
       }).
       success(function(data){
         console.log("success devices");
