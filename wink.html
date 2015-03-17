@@ -365,9 +365,9 @@ body{
       success(function(data){
         console.log("successful login");
         console.log(data);
-        //$scope.accessToken = localStorage.accessToken = data.access_token;
+        $scope.accessToken = localStorage.accessToken = data.access_token;
         //$location.url($location.path());
-        //$scope.getDevices();
+        $scope.getDevices();
         //alertify.success("Logged in successfully");
       }).
       error(function(data){
@@ -390,19 +390,12 @@ body{
 
     $scope.getDevices = function(){
 
-      var reqData = {
-        client_secret:"9f6c71f4edee1d4cdc987b485ae8c318",
-        client_id:"ffa784d28684daf13ea7f0c6dad7a03c"
-      };
-
-
       $http({
         method: 'GET',
         url: "https://winkapi.quirky.com/users/me/light_bulbs/",
         headers: {
           "Authorization": "Bearer "+$scope.accessToken
-        },
-        params: reqData
+        }
       }).
       success(function(data){
         console.log("success devices");
