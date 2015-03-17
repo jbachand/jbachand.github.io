@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Welcome to Beached Island</title>
+  <title>Wink Webapp</title>
   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
@@ -240,6 +240,20 @@ body{
   var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
     $scope.devices = [];
     $scope.accessToken = localStorage.accessToken || null;
+    $scope.authEndpoint = "https://winkapi.quirky.com/oauth2/authorize?client_id=ffa784d28684daf13ea7f0c6dad7a03c&redirect_uri=https://jbachand.github.io/wink.html&state=login";
+
+    var getParams = $location.search();
+    if(typeof getParams.code === 'string'){
+      $scope.login(getParams.code);
+    }
+
+    $scope.$watch('accessToken', function(){
+      if(!$scope.accessToken){
+        window.location.href=$scope.authEndpoint;
+      }
+    });
+
+
     $rootScope.selectedDevice = null;
 
     var pubnub = PUBNUB;
@@ -335,18 +349,17 @@ body{
 
 
 
-    $scope.login = function(email, password){
+    $scope.login = function(code){
       console.log('login clicked');
       var reqData = {
-        username:email,
-        password:password,
-        grant_type:"password",
-        client_secret:"ce609edf5e85015d393e7859a38056fe",
-        client_id:"quirky_wink_ios_app"
-      };
+        grant_type:"authorization_code",
+        client_secret:"9f6c71f4edee1d4cdc987b485ae8c318",
+        client_id:"ffa784d28684daf13ea7f0c6dad7a03c",
+        code:code
+        };
 
       console.log(reqData);
-
+      //https://winkapi.quirky.com/oauth2/authorize?client_id=ffa784d28684daf13ea7f0c6dad7a03c&redirect_uri=https://jbachand.github.io/wink.html&state=foo.
       $http({
         method: 'POST',
         url: "https://winkapi.quirky.com/oauth2/token/",
@@ -355,6 +368,7 @@ body{
       success(function(data){
         console.log("successful login");
         $scope.accessToken = localStorage.accessToken = data.access_token;
+        $location.url($location.path());
         $scope.getDevices();
         //alertify.success("Logged in successfully");
       }).
