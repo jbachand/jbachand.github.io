@@ -235,7 +235,7 @@ body{
   angular.module('ngWink',['ngRoute'])
   .config( function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
-    
+
   });
 
 
@@ -352,13 +352,13 @@ body{
 
 
 
-    $scope.login = function(code){
+    $scope.login = function(codez){
       console.log('login clicked');
       var reqData = {
         grant_type:"authorization_code",
         client_secret:"9f6c71f4edee1d4cdc987b485ae8c318",
         client_id:"ffa784d28684daf13ea7f0c6dad7a03c",
-        code:code
+        code:codez
         };
 
       console.log(reqData);
