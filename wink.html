@@ -246,15 +246,9 @@ body{
 
     var getParams = $location.search();
     console.log(getParams);
-    if(typeof getParams.code === 'string'){
-      $scope.login(getParams.code);
-    }
 
-    $scope.$watch('accessToken', function(){
-      if(!$scope.accessToken){
-        window.location.href=$scope.authEndpoint;
-      }
-    });
+
+
 
 
     $rootScope.selectedDevice = null;
@@ -419,6 +413,16 @@ body{
       });
 
     }
+
+    if(typeof getParams.code === 'string'){
+      $scope.login(getParams.code);
+    }
+
+    $scope.$watch('accessToken', function(){
+      if(!$scope.accessToken){
+        window.location.href=$scope.authEndpoint;
+      }
+    });
 
     if($scope.accessToken){
       $scope.getDevices();
