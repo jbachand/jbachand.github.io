@@ -370,7 +370,7 @@ body{
         console.log(data);
         $scope.accessToken = data.access_token;
         localStorage.accessToken = data.access_token;
-        //$location.url($location.path());
+        $location.url($location.path());
         $scope.getDevices();
         //alertify.success("Logged in successfully");
       }).
