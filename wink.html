@@ -247,7 +247,7 @@ body{
     var getParams = $location.search();
     console.log(getParams);
 
-    if(!$scope.accessToken){
+    if(!$scope.accessToken && typeof getParams.code !== 'string'){
       window.location.href=$scope.authEndpoint;
     }
 
