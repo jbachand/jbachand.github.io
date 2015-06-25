@@ -394,7 +394,7 @@ body{
 
     $scope.getDevices = function(){
       
-      http({
+      $http({
         method: 'GET',
         url: "https://winkapi.quirky.com/users/me/propane_tanks/",
         headers: {
