@@ -393,6 +393,18 @@ body{
 
 
     $scope.getDevices = function(){
+      
+      http({
+        method: 'GET',
+        url: "https://winkapi.quirky.com/users/me/propane_tanks/",
+        headers: {
+          "Authorization": "Bearer "+$scope.accessToken
+        }
+      }).
+      success(function(data){
+        console.log("success propane");
+        console.log(data);
+      });
 
       $http({
         method: 'GET',
