@@ -402,10 +402,10 @@ body{
           "Authorization": "Bearer "+$scope.accessToken
         }
       }).
-      success(function(data){
+      success(function(tanks){
         console.log("success propane");
-        console.log(data);
-        $scope.oilLevel = data[0].last_reading.remaining;
+        console.log(tanks);
+        $scope.oilLevel = tanks.data[0].last_reading.remaining;
       });
 
       $http({
