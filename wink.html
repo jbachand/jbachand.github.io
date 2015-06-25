@@ -177,6 +177,7 @@ body{
     <div class="app" ng-if="accessToken" >
       <div class="header">
         Wink Hub Basic Controls
+        <h6>Oil Level: {{oilLevel*100}}%</h6>
         <div  class="pull-right">
           <button class="btn btn-lg" ng-click="logout()">Logout</button>
         </div>
@@ -404,6 +405,7 @@ body{
       success(function(data){
         console.log("success propane");
         console.log(data);
+        $scope.oilLevel = data[0].last_reading.remaining;
       });
 
       $http({
