@@ -6,7 +6,6 @@
   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
-  <script src="https://cdn.pubnub.com/pubnub.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
@@ -177,6 +176,7 @@ body{
     <div class="app" ng-if="accessToken" >
       <div class="header">
         Wink Hub Basic Controls
+        <h6>Oil Level: {{oilLevel*100}}%</h6>
         <div  class="pull-right">
           <button class="btn btn-lg" ng-click="logout()">Logout</button>
         </div>
@@ -251,12 +251,7 @@ body{
       window.location.href=$scope.authEndpoint;
     }
 
-
-
     $rootScope.selectedDevice = null;
-
-    var pubnub = PUBNUB;
-
 
     $scope.$watch('selectedDevice.desired_state.brightness', function(val,old){
       if(typeof old !== 'undefined' && $scope.selectedDevice.desired_state.brightness != $scope.selectedDevice.last_reading.brightness){
@@ -293,18 +288,7 @@ body{
           });
         },100);
 
-        pubnub.init({
-          subscribe_key: $rootScope.selectedDevice.subscription.pubnub.subscribe_key
-        }).subscribe({
-          channel : $rootScope.selectedDevice.subscription.pubnub.channel,
-          message : function(msg){
-            //console.log(msg)
-            $rootScope.selectedDevice.desired_state = JSON.parse(msg).desired_state;
-            console.log($rootScope.selectedDevice);
-            $scope.$apply();
-            //alertify.log("Settings updated from outside application");
-          }
-        });
+
 
       }
     };
@@ -345,9 +329,6 @@ body{
         console.log(data);
       });
     };
-
-
-
 
     $scope.login = function(codez){
       console.log('login clicked');
@@ -393,6 +374,19 @@ body{
 
 
     $scope.getDevices = function(){
+      
+      $http({
+        method: 'GET',
+        url: "https://winkapi.quirky.com/users/me/propane_tanks/",
+        headers: {
+          "Authorization": "Bearer "+$scope.accessToken
+        }
+      }).
+      success(function(tanks){
+        console.log("success propane");
+        console.log(tanks);
+        $scope.oilLevel = tanks.data[0].last_reading.remaining;
+      });
 
       $http({
         method: 'GET',
@@ -402,7 +396,7 @@ body{
         }
       }).
       success(function(data){
-        console.log("success devices");
+        console.log("success lights");
         console.log(data);
         $scope.devices = data.data;
         if($scope.devices.length>0){
