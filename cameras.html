@@ -16,14 +16,32 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
+iframe{
+  border:none;
+  margin:0 auto;
+  display:block;
 
+  width:640px;
+  height:480px;
+}
 </style>
 </head>
 <body ng-app="ngDlink">
+  <div class="row">
+    <div class="col-sm-6">
+      <button ng-if="2==2" ng-click="getEnergy()">Energy</button>
+      Energy<br>
+      <iframe ng-if="energy" src="http://192.168.1.6/both_tables.html"></iframe>
+    </div>
+    <div class="col-sm-6">
+      Lights<br>
+      <iframe src="http://192.168.1.6/both_tables.html"></iframe>
+    </div>
 
-  <div id="container" ng-controller="appController">
-
-    <iframe ng-repeat="cam in cams" ng-src="http://admin:{{password}}@{{cam}}/video.cgi"></iframe>
+    <div class="col-sm-6" ng-repeat="cam in cams">
+      Cam {{$index+1}}<br>
+      <iframe class="cam" ng-src="{{getIframeSrc(cam)}}"></iframe>
+    </div>
 
   </div>
 </body>
@@ -36,18 +54,75 @@
 
   angular.module('ngDlink',['ngRoute'])
   .config( function($routeProvider, $locationProvider) {
-    $locationProvider.html5Mode(true);
 
-  });
+  }).run(function($rootScope, $http){
+    $rootScope.cams = ['192.168.1.37','192.168.1.47','192.168.1.97','192.168.1.178'];
+    $rootScope.password = localStorage.password || null;
+
+    $rootScope.getIframeSrc = function(src) {
+      return  'http://admin:'+$rootScope.password+'@'+src+'/video.cgi';
+    };
+
+    $rootScope.energy=true;
+
+    $rootScope.refresh = function(){
+      $rootScope.energy = true;
+      $rootScope.$apply();
+      setTimeout(function(){
+        $rootScope.energy = false;
+        $rootScope.$apply();
+        $rootScope.refresh();
+      }, 1000);
+    }
+
+    $rootScope.refresh();
 
 
-  var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
-    $scope.cams = ['192.168.1.37','192.168.1.47','192.168.1.97','192.168.1.178'];
-    $scope.password = localStorage.password || null;
+    $rootScope.getEnergy = function(){
+      //192.168.1.6/both_tables.html
+      var url="http://192.168.1.6/readings_json.json";
+
+      $.ajax({
+        url: url,
+        type: "GET",
+        crossDomain: true,
+        data: {},
+        dataType: "json",
+        success: function (response) {
+          var resp = JSON.parse(response)
+          alert(resp.status);
+        },
+        error: function (xhr, status) {
+          alert("error");
+        }
+      });
+
+      $http({
+        url:url,
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }}).
+        success(function(){
+          console.log('woo');
+        }).
+        error(function(){
+          console.log('womp');
+        });
 
 
+    }
 
 
-  }
+  }).config(function($sceProvider, $httpProvider) {
+
+    $sceProvider.enabled(false);
+    $httpProvider.defaults.useXDomain = true;
+
+    $httpProvider.defaults.headers.post = {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    });
 </script>
 </html>
