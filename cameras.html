@@ -23,7 +23,7 @@
 
   <div id="container" ng-controller="appController">
 
-    <img ng-repeat="cam in cams" ng-src="http://admin:{{password}}@{{cam}}/video.cgi">
+    <img ng-repeat="cam in cams" ng-src="http://admin:{{password}}@{{cam}}/image.jpg">
 
   </div>
 </body>
@@ -42,7 +42,7 @@
 
 
   var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
-    $scope.cams = ['192.168.37','192.168.47'];
+    $scope.cams = ['192.168.1.37','192.168.1.47','192.168.1.97','192.168.1.178'];
     $scope.password = localStorage.password || null;
 
 
