@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wink Webapp</title>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.3/animate.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<style>
+
+</style>
+</head>
+<body ng-app="ngDlink">
+
+  <div id="container" ng-controller="appController">
+
+    <img ng-repeat="cam in cams" ng-src="http://admin:{{password}}@{{cam}}/video.cgi"
+
+  </div>
+</body>
+
+<script>
+
+  /**
+  * @Author Jeff Bachand
+  */
+
+  angular.module('ngDlink',['ngRoute'])
+  .config( function($routeProvider, $locationProvider) {
+    $locationProvider.html5Mode(true);
+
+  });
+
+
+  var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
+    $scope.cams = ['192.168.37','192.168.47'];
+    $scope.password = localStorage.password || null;
+
+
+
+
+  }
+</script>
+</html>
