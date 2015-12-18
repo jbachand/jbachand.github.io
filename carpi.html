@@ -255,7 +255,7 @@ body{
       } else {
         $scope.accessToken = $location.hash().split('=')[1];
         $scope.accessToken = $scope.accessToken.split('&')[0];
-        localStorage.accessToken = $scope.accessTokenA;
+        localStorage.accessTokenA = $scope.accessToken;
       }
 
     }
