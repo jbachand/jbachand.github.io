@@ -242,7 +242,8 @@ body{
   var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
     $scope.devices = [];
     $scope.accessToken = localStorage.accessToken || null;
-    $scope.authEndpoint = "https://www.amazon.com/ap/oa?client_id=amzn1.application.e95a3fd9ac7a4b27a03341640f9ea4fc&redirect_uri=https://jbachand.github.io/carpi.html&scope=alexa%3Aall&response_type=token&scope_data={%20%22alexa:all%22:%20{%20%22productID%22:%20%22carPi%22,%20%22productInstanceAttributes%22:%20{%20%22deviceSerialNumber%22:%20%221%22%20}%20}%20}";
+    $scope.authEndpoint = "https://www.amazon.com/ap/oa?client_id=amzn1.application.e95a3fd9ac7a4b27a03341640f9ea4fc&redirect_uri="+encodeURIComponent(https://jbachand.github.io/carpi.html)+"&scope=alexa%3Aall&response_type=token&scope_data="+encodeURIComponent({"alexa:all": {"productID": "carPi","productInstanceAttributes": {"deviceSerialNumber": "1"}}});
+    
 
     var getParams = $location.search();
     console.log(getParams);
