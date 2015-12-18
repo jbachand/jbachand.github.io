@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
+  <script src="https://raw.githubusercontent.com/mattdiamond/Recorderjs/master/dist/recorder.js"></script>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
@@ -315,8 +316,24 @@ body{
       });
     };
 
+
     if($scope.accessToken){
-      $scope.getMeta();
+
+      try {
+        // webkit shim
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+        window.URL = window.URL || window.webkitURL;
+
+        audio_context = new AudioContext;
+        __log('Audio context set up.');
+        __log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+      } catch (e) {
+        alert('No web audio support in this browser!');
+      }
+
+
+      //$scope.getMeta();
     }
 
 
