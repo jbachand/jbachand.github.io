@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wink Webapp</title>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.3/animate.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<style>
+body{
+  background:url('https://i.imgur.com/Flc5Imv.jpg');
+}
+.modal-header h1{
+  color: #2AB1DD;
+  letter-spacing: 0.03em;
+  font-size: 50pt;
+  font-weight: 600;
+}
+.app{
+}
+.header{
+  background-color: #2AB1DD;
+  color: #FFF;
+  font-size: 40pt;
+  padding-left: 100px;
+  text-shadow: 1px 1px 1px #666;
+}
+.header .btn{
+  background-color: #FFF;
+  color: #396D98;
+  border-right: 2px solid #428BCA;
+  border-bottom: 2px solid #428BCA;
+  margin-right: 50px;
+}
+.devices{
+  padding-left: 50px;
+  padding-right: 50px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding-top: 10px;
+  padding-bottom: 20px;
+  border-bottom: 10px #FFF solid;
+}
+.device{
+  display: inline-block;
+  text-align: center;
+  background-color: #FFF;
+  margin-right: 10px;
+  cursor: pointer;
+  text-transform: capitalize;
+  position: relative;
+  border-radius: 5px;
+  border-bottom: 2px solid #AAA;
+  border-right: 1px solid #AAA;
+}
+.device.selected{
+  border: 2px solid #52AAC7;
+}
+.device .percent{
+  position: absolute;
+  top: 40%;
+  left: 35%;
+  font-size: 20pt;
+  color: #FFF;
+  text-shadow: 1px 1px 1px #666;
+}
+.selectedDevice{
+  width: 350px;
+  min-height: 130px;
+  margin-right: 100px;
+  background-color: #FFF;
+  border-radius: 5px;
+  border: 1px solid #CCC;
+  border-bottom: 2px solid #666;
+  padding: 20px;
+  text-transform: capitalize;
+  border-right: 2px solid #AAA;
+}
+.selectedDevice h2{
+  margin-top:0px;
+}
+.toggle{
+  display: block;
+  position: absolute;
+}
+.loginError{
+  border-radius: 30px;
+  width: 100%;
+  line-height: 60px;
+  text-align: center;
+  color: #FFF;
+  background-color: #DF3F3F;
+  height: 60px;
+  font-size: 18pt;
+  letter-spacing: 0.03em;
+  font-weight: 400;
+}
+.statusAlert{
+  border-radius: 30px;
+  width: 170px;
+  line-height: 40px;
+  text-align: center;
+  color: #FFF;
+  height: 40px;
+  font-size: 18pt;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  display: inline-block;
+  text-transform: capitalize;
+
+  }
+.statusAlert.tada{
+  background-color: #DF3F3F;
+}
+.statusAlert.pulse{
+  background-color: #4CB54C;
+  border-bottom: 2px solid #008000
+}
+.devices>h2{
+  height:38px;
+}
+</style>
+</head>
+<body ng-app="ngWink">
+
+  <div id="container" ng-controller="appController">
+
+
+    <div ng-if="!accessToken">
+
+      <div id="loginModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="text-center">Login
+                <img src="https://i.imgur.com/hoUF7sB.jpg" width="300px" >
+
+              </h1>
+              <div ng-if="loginError" class="animated loginError zoomInUp">
+                Error Logging in, try again.
+              </div>
+            </div>
+            <div class="modal-body">
+              <form class="form col-md-12 center-block" ng-submit="login(email, password)">
+                <div class="form-group">
+                  <input type="text" class="form-control input-lg" placeholder="Email" ng-model="email">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control input-lg" placeholder="Password" ng-model="password">
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-primary btn-lg btn-block" value="Sign In">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <div class="col-md-12">
+                Login with your Wink Hub account information
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="app" ng-if="accessToken" >
+      <div class="header">
+        Wink Hub Basic Controls
+        <h6>Oil Level: {{oilLevel*100}}%</h6>
+        <div  class="pull-right">
+          <button class="btn btn-lg" ng-click="logout()">Logout</button>
+        </div>
+      </div>
+
+
+      <div  ng-if="devices" class="devices">
+
+        <h2>Lights
+          <div ng-if="statusAlert" class="animated statusAlert" ng-class="{'pulse ':statusAlert=='success', 'tada':statusAlert=='error'}">
+            <i class="fa" ng-class="{'fa-check':statusAlert=='success', 'fa-times':statusAlert=='error'}"></i>&nbsp;{{statusAlert}}
+          </div>
+        </h2>
+        <div class="device" ng-repeat="device in devices" ng-click="selectDevice($index)">
+          <h3>{{device.name}}</h3>
+          <img ng-if="device.desired_state.powered" src="https://i.imgur.com/BzbO9fq.gif">
+          <div class="percent" ng-if="device.desired_state.powered">{{device.desired_state.brightness*100 | number:0}}%</div>
+          <img ng-if="!device.desired_state.powered" src="https://i.imgur.com/S2DoAu2.gif">
+        </div>
+
+        <div ng-if="selectedDevice" class="pull-right selectedDevice">
+          <h2>{{selectedDevice.name}} <span ng-if="selectedDevice.desired_state.powered">- {{selectedDevice.desired_state.brightness*100 | number:0}}%</span><span ng-if="!selectedDevice.desired_state.powered">- Off</span></h2>
+          <input ng-if="selectedDevice.desired_state.powered" type="range" min="0" max="1" step="0.01" ng-model="selectedDevice.desired_state.brightness">
+
+          <span class="toggle" ng-hide="!selectedDevice.inital_state">
+            <input  type="checkbox" class="onOff"  checked>
+          </span>
+          <span class="toggle" ng-hide="selectedDevice.inital_state">
+            <input  type="checkbox" class="onOff">
+          </span>
+
+          <div ng-repeat="(key,attr) in selectedDevice.desired_state">
+            <span ng-if="key!='powered'&&key!='brightness'">{{key}}</span>
+            <input type="text" ng-if="key!='powered'&&key!='brightness'" ng-model="[key]"></input>
+          </div>
+          <button ng-if="selectedDevice.hasUpdates" ng-click="updateState()" class="btn btn-success pull-right">Update</button>
+          <div ng-if="1==2" ng-repeat="(key,attr) in selectedDevice">
+            {{key}}-{{attr}}
+          </div>
+        </div>
+
+      </div>
+
+
+
+    </div>
+  </div>
+</body>
+
+<script>
+
+  /**
+  * @Author Jeff Bachand
+  */
+
+  angular.module('ngWink',['ngRoute'])
+  .config( function($routeProvider, $locationProvider) {
+    $locationProvider.html5Mode(true);
+
+  });
+
+
+  var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
+    $scope.devices = [];
+    $scope.accessToken = localStorage.accessToken || null;
+    $scope.authEndpoint = "https://www.amazon.com/ap/oa?client_id=amzn1.application.e95a3fd9ac7a4b27a03341640f9ea4fc&redirect_uri=https://jbachand.github.io/carpi.html&scope=alexa%3Aall&response_type=token&scope_data={%20%22alexa:all%22:%20{%20%22productID%22:%20%22carPi%22,%20%22productInstanceAttributes%22:%20{%20%22deviceSerialNumber%22:%20%221%22%20}%20}%20}";
+
+    var getParams = $location.search();
+    console.log(getParams);
+
+    if(!$scope.accessToken && typeof getParams.code !== 'string'){
+      window.location.href=$scope.authEndpoint;
+    }
+
+    $rootScope.selectedDevice = null;
+
+    $scope.$watch('selectedDevice.desired_state.brightness', function(val,old){
+      if(typeof old !== 'undefined' && $scope.selectedDevice.desired_state.brightness != $scope.selectedDevice.last_reading.brightness){
+        $scope.selectedDevice.hasUpdates = true;
+      }
+    });
+
+    $scope.updateStatus = function(type, delay){
+      if(typeof type ==='undefined'){
+        type="success";
+      }
+      if(typeof delay ==='undefined'){
+        delay=5000;
+      }
+      $scope.statusAlert = type;
+      $timeout(function(){
+        $scope.statusAlert = null;
+      },delay);
+    }
+
+
+    $scope.selectDevice = function(idx){
+      if(typeof $scope.devices[idx] !== 'undefined' && $scope.devices[idx]){
+        $rootScope.selectedDevice = $scope.devices[idx];
+        $rootScope.selectedDevice.inital_state = $rootScope.selectedDevice.desired_state.powered;
+        $timeout(function(){
+          $(".onOff").bootstrapSwitch();
+
+          $('.onOff').on('switchChange.bootstrapSwitch', function(event, state) {
+            console.log(state);
+            $rootScope.selectedDevice.desired_state.powered = state;
+            $scope.$apply();
+            $scope.updateState();
+          });
+        },100);
+
+
+
+      }
+    };
+
+    $scope.logout = function(){
+      $scope.accessToken = null;
+      delete localStorage.accessToken;
+      window.location.href=$scope.authEndpoint;
+    };
+
+    $scope.updateState = function(){
+      var reqData = {
+        "desired_state":$rootScope.selectedDevice.desired_state
+      };
+
+      $http({
+        method: 'PUT',
+        url:"https://winkapi.quirky.com/light_bulbs/"+$rootScope.selectedDevice.light_bulb_id,
+        headers: {
+          "Authorization": "Bearer "+$scope.accessToken
+        },
+        data: reqData
+
+      }).
+      success(function(data){
+        console.log("success update");
+        console.log(data);
+        $scope.selectedDevice.hasUpdates = false;
+        $scope.updateStatus();
+        $scope.$apply();
+
+        //alertify.success("Updated successfully");
+
+      }).
+      error(function(data){
+        $scope.updateStatus("error");
+        console.log("fail update");
+        console.log(data);
+      });
+    };
+
+    $scope.login = function(codez){
+      console.log('login clicked');
+      var reqData = {
+        grant_type:"authorization_code",
+        client_secret:"9f6c71f4edee1d4cdc987b485ae8c318",
+        client_id:"ffa784d28684daf13ea7f0c6dad7a03c",
+        code:codez
+        };
+
+      console.log(reqData);
+      //https://winkapi.quirky.com/oauth2/authorize?client_id=ffa784d28684daf13ea7f0c6dad7a03c&redirect_uri=https://jbachand.github.io/wink.html&state=foo.
+      $http({
+        method: 'POST',
+        url: "https://winkapi.quirky.com/oauth2/token/",
+        params: reqData
+      }).
+      success(function(data){
+        console.log("successful login");
+        console.log(data);
+        $scope.accessToken = data.access_token;
+        localStorage.accessToken = data.access_token;
+        $location.url($location.path());
+        $scope.getDevices();
+        //alertify.success("Logged in successfully");
+      }).
+      error(function(data){
+        console.log("failed login");
+        console.log(data);
+        $scope.loginError = true;
+        $timeout(function(){
+          $(".loginError").removeClass(".zoomInUp").addClass(".bounceDownOut");
+          $timeout(function(){
+            $(".loginError").removeClass(".bounceDownOut").addClass(".zoomInUp");
+            $scope.loginError = false;
+
+          },1000);
+        },5000);
+      });
+
+    };
+
+
+
+    $scope.getDevices = function(){
+
+      $http({
+        method: 'GET',
+        url: "https://winkapi.quirky.com/users/me/propane_tanks/",
+        headers: {
+          "Authorization": "Bearer "+$scope.accessToken
+        }
+      }).
+      success(function(tanks){
+        console.log("success propane");
+        console.log(tanks);
+        $scope.oilLevel = tanks.data[0].last_reading.remaining;
+      });
+
+      $http({
+        method: 'GET',
+        url: "https://winkapi.quirky.com/users/me/light_bulbs/",
+        headers: {
+          "Authorization": "Bearer "+$scope.accessToken
+        }
+      }).
+      success(function(data){
+        console.log("success lights");
+        console.log(data);
+        $scope.devices = data.data;
+        if($scope.devices.length>0){
+          $scope.selectDevice(0); //select the first device by default
+        }
+        $scope.updateStatus();
+      }).
+      error(function(data){
+        console.log("fail devices must have a bad accessToken");
+        //$scope.accessToken = localStorage.accessToken = null;
+        $scope.updateStatus('error');
+        console.log(data);
+      });
+
+    }
+
+    if(typeof getParams.code === 'string'){
+      $scope.login(getParams.code);
+    }
+
+
+
+    if($scope.accessToken){
+      $scope.getDevices();
+    };
+
+
+  }
+</script>
+</html>
