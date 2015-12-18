@@ -241,14 +241,12 @@ body{
 
   var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
     $scope.devices = [];
-    $scope.accessToken = localStorage.accessToken || null;
+    $scope.accessToken = localStorage.accessTokenA || null;
     $scope.authEndpoint = "https://www.amazon.com/ap/oa?client_id=amzn1.application-oa2-client.d0ce2821834d4eafae1c5669e3cfd10c&redirect_uri="+encodeURIComponent('https://jbachand.github.io/carpi.html')+"&scope=alexa%3Aall&response_type=token&scope_data="+encodeURIComponent('{"alexa:all": {"productID": "carPi","productInstanceAttributes": {"deviceSerialNumber": "1"}}}');
-
+    $scope.reqEndpoint = "https://access-alexa-na.amazon.com"
 
     var getParams = $location.search();
-    console.log('get params',getParams);
-    console.log('wind hash', $location.hash());
-    console.log('winz hash', $location.hash().split('=')[0]);
+
 
 
     if(!$scope.accessToken ){
@@ -256,69 +254,27 @@ body{
         window.location.href=$scope.authEndpoint
       } else {
         $scope.accessToken = $location.hash().split('=')[1];
-        localStorage.accessToken = $scope.accessToken;
+        $scope.accessToken = $scope.accessToken.split('&')[0];
+        localStorage.accessToken = $scope.accessTokenA;
       }
 
     }
 
-    return;
-
-    $rootScope.selectedDevice = null;
-
-    $scope.$watch('selectedDevice.desired_state.brightness', function(val,old){
-      if(typeof old !== 'undefined' && $scope.selectedDevice.desired_state.brightness != $scope.selectedDevice.last_reading.brightness){
-        $scope.selectedDevice.hasUpdates = true;
-      }
-    });
-
-    $scope.updateStatus = function(type, delay){
-      if(typeof type ==='undefined'){
-        type="success";
-      }
-      if(typeof delay ==='undefined'){
-        delay=5000;
-      }
-      $scope.statusAlert = type;
-      $timeout(function(){
-        $scope.statusAlert = null;
-      },delay);
-    }
 
 
-    $scope.selectDevice = function(idx){
-      if(typeof $scope.devices[idx] !== 'undefined' && $scope.devices[idx]){
-        $rootScope.selectedDevice = $scope.devices[idx];
-        $rootScope.selectedDevice.inital_state = $rootScope.selectedDevice.desired_state.powered;
-        $timeout(function(){
-          $(".onOff").bootstrapSwitch();
-
-          $('.onOff').on('switchChange.bootstrapSwitch', function(event, state) {
-            console.log(state);
-            $rootScope.selectedDevice.desired_state.powered = state;
-            $scope.$apply();
-            $scope.updateState();
-          });
-        },100);
-
-
-
-      }
-    };
 
     $scope.logout = function(){
       $scope.accessToken = null;
-      delete localStorage.accessToken;
+      delete localStorage.accessTokenA;
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.updateState = function(){
-      var reqData = {
-        "desired_state":$rootScope.selectedDevice.desired_state
-      };
+    $scope.getMeta = function(){
+      var reqData ={};
 
       $http({
-        method: 'PUT',
-        url:"https://winkapi.quirky.com/light_bulbs/"+$rootScope.selectedDevice.light_bulb_id,
+        method: 'POST',
+        url:$scope.reqEndpoint+"/v1/avs/audioplayer/metadataAvailable",
         headers: {
           "Authorization": "Bearer "+$scope.accessToken
         },
@@ -326,114 +282,21 @@ body{
 
       }).
       success(function(data){
-        console.log("success update");
+        console.log("success meta");
         console.log(data);
-        $scope.selectedDevice.hasUpdates = false;
-        $scope.updateStatus();
-        $scope.$apply();
-
-        //alertify.success("Updated successfully");
 
       }).
       error(function(data){
-        $scope.updateStatus("error");
         console.log("fail update");
         console.log(data);
       });
     };
 
-    $scope.login = function(codez){
-      console.log('login clicked');
-      var reqData = {
-        grant_type:"authorization_code",
-        client_secret:"9f6c71f4edee1d4cdc987b485ae8c318",
-        client_id:"ffa784d28684daf13ea7f0c6dad7a03c",
-        code:codez
-        };
-
-      console.log(reqData);
-      //https://winkapi.quirky.com/oauth2/authorize?client_id=ffa784d28684daf13ea7f0c6dad7a03c&redirect_uri=https://jbachand.github.io/wink.html&state=foo.
-      $http({
-        method: 'POST',
-        url: "https://winkapi.quirky.com/oauth2/token/",
-        params: reqData
-      }).
-      success(function(data){
-        console.log("successful login");
-        console.log(data);
-        $scope.accessToken = data.access_token;
-        localStorage.accessToken = data.access_token;
-        $location.url($location.path());
-        $scope.getDevices();
-        //alertify.success("Logged in successfully");
-      }).
-      error(function(data){
-        console.log("failed login");
-        console.log(data);
-        $scope.loginError = true;
-        $timeout(function(){
-          $(".loginError").removeClass(".zoomInUp").addClass(".bounceDownOut");
-          $timeout(function(){
-            $(".loginError").removeClass(".bounceDownOut").addClass(".zoomInUp");
-            $scope.loginError = false;
-
-          },1000);
-        },5000);
-      });
-
-    };
-
-
-
-    $scope.getDevices = function(){
-
-      $http({
-        method: 'GET',
-        url: "https://winkapi.quirky.com/users/me/propane_tanks/",
-        headers: {
-          "Authorization": "Bearer "+$scope.accessToken
-        }
-      }).
-      success(function(tanks){
-        console.log("success propane");
-        console.log(tanks);
-        $scope.oilLevel = tanks.data[0].last_reading.remaining;
-      });
-
-      $http({
-        method: 'GET',
-        url: "https://winkapi.quirky.com/users/me/light_bulbs/",
-        headers: {
-          "Authorization": "Bearer "+$scope.accessToken
-        }
-      }).
-      success(function(data){
-        console.log("success lights");
-        console.log(data);
-        $scope.devices = data.data;
-        if($scope.devices.length>0){
-          $scope.selectDevice(0); //select the first device by default
-        }
-        $scope.updateStatus();
-      }).
-      error(function(data){
-        console.log("fail devices must have a bad accessToken");
-        //$scope.accessToken = localStorage.accessToken = null;
-        $scope.updateStatus('error');
-        console.log(data);
-      });
-
-    }
-
-    if(typeof getParams.code === 'string'){
-      $scope.login(getParams.code);
-    }
-
-
-
     if($scope.accessToken){
-      $scope.getDevices();
-    };
+      $scope.getMeta();
+    }
+
+
 
 
   }
