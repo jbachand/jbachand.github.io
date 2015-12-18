@@ -271,14 +271,37 @@ body{
 
     $scope.getMeta = function(){
       var reqData ={};
+      var fd = new FormData();
+      fd.append("messageHeader", {
+        "deviceContext": [
+      {
+        "name":"playbackState",
+        "namespace":"AudioPlayer",
+        "payload": {
+          "streamId": "1",
+          "offsetInMilliseconds": "0",
+          "playerActivity": "IDLE"
+        }
+      }]
+    });
+      fb.append("messageBody",{
+        "profile": "alexa-close-talk",
+        "locale": "en-us",
+        "format": "audio/L16; rate=16000; channels=1"
+      });
+      var soundBlob="";
+      fd.append('audio', soundBlob);
+
 
       $http({
         method: 'POST',
-        url:$scope.reqEndpoint+"/v1/avs/audioplayer/metadataAvailable",
+        url:$scope.reqEndpoint+"/v1/avs/speechrecognizer/recognize",
         headers: {
           "Authorization": "Bearer "+$scope.accessToken
         },
-        data: reqData
+        data: fd,
+        processData: false,
+        contentType: false
 
       }).
       success(function(data){
