@@ -251,12 +251,14 @@ body{
     console.log('winz hash', $location.hash().split('=')[0]);
 
 
-    if(!$scope.accessToken && typeof $location.hash().split('=')[0] != 'access_token'){
+    if(!$scope.accessToken && $location.hash().split('=')[0] != 'access_token'){
       window.location.href=$scope.authEndpoint;
     } else {
       $scope.accessToken = $location.hash().split('=')[1];
       localStorage.accessToken = $scope.accessToken;
     }
+
+    return;
 
     $rootScope.selectedDevice = null;
 
