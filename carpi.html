@@ -247,9 +247,11 @@ body{
 
     var getParams = $location.search();
     console.log('get params',getParams);
+    console.log('wind hash', $location.hash());
+    console.log('winz hash', $location.hash().split('=')[0]);
+
 
     if(!$scope.accessToken && typeof $location.hash().split('=')[0] != 'access_token'){
-      console.log('wind hash', $location.hash());
       window.location.href=$scope.authEndpoint;
     } else {
       $scope.accessToken = $location.hash().split('=')[1];
