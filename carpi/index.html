@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test18</h1>
+      <h1>test19</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -203,13 +203,14 @@ body{
       reader.readAsDataURL(soundBlob);
 
       reader.onloadend = function() {
-        var soundBlob = reader.result;
+        var soundBlob2 = reader.result;
         //console.log(base64data );
 
 
         var fd = new FormData();
         fd.append("request", requestText);
-        fd.append('audio', soundBlob);
+        console.log('audio blob decoded', soundBlob2);
+        fd.append('audio', soundBlob2);
 
         $.ajax({
           method: 'POST',
