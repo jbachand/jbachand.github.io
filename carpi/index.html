@@ -210,6 +210,7 @@ body{
         var fd = new FormData();
         fd.append("request", requestText);
         console.log('audio blob decoded', soundBlob);
+        soundBlob = null;
         fd.append('audio', soundBlob);
 
         $.ajax({
