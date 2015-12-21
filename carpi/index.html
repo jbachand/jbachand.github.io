@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test</h1>
+      <h1>test2</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -305,7 +305,7 @@ body{
         var li2 = document.createElement('li');
         li2.appendChild(link);
         document.getElementById("recordingslist").appendChild(li2);
-      });
+
 
         __log('Exporting to mp3');
         var b = Date.now();
@@ -332,7 +332,7 @@ body{
           var li2 = document.createElement('li');
           li2.appendChild(link);
           document.getElementById("recordingslist").appendChild(li2);
-
+        });
 
       });
 
