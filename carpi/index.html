@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test2</h1>
+      <h1>test3</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -221,8 +221,7 @@ body{
 
       console.log('form is ', fd);
 
-      var fdn={};
-      fdn["messageHeader"] = {
+      var fdn{}, fdn['request']={"messageHeader", {
         "deviceContext": [
       {
         "name":"playbackState",
@@ -233,13 +232,12 @@ body{
           "playerActivity": "IDLE"
         }
       }]
-    };
-    fdn["messageBody"] = {
+    },"messageBody",{
       "profile": "alexa-close-talk",
       "locale": "en-us",
       "format": "audio/L16; rate=16000; channels=1"
-    };
-    fdn["audio"] = soundBlob;
+    }
+  },fdn["audio"] = soundBlob;
 
 
       $http({
