@@ -141,8 +141,8 @@ body{
 
       <h1>test</h1>
 
-      <button ng-click="startRecording(this);" disabled="recording">record</button>
-      <button ng-click="stopRecording(this);" disabled="!recording">stop</button>
+      <button ng-click="startRecording(this);" disabled="{{recording}}">record</button>
+      <button ng-click="stopRecording(this);" disabled="{{!recording}}">stop</button>
 
       <h2>Recordings</h2>
       <ul id="recordingslist"></ul>
