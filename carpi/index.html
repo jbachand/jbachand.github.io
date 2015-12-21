@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.getMeta = function(){
+    $scope.getMeta = function(soundBlob){
       var reqData ={};
       var fd = new FormData();
       fd.append("messageHeader", {
@@ -216,7 +216,7 @@ body{
         "locale": "en-us",
         "format": "audio/L16; rate=16000; channels=1"
       });
-      var soundBlob="";
+      //var soundBlob="";
       fd.append('audio', soundBlob);
 
 
@@ -320,6 +320,7 @@ body{
           var length = ((blob.size*8)/128000);
           __log('MP3 duration: ' +length + ' s' );
           console.log(blob);
+          $scope.getMeta(blob);
           var url = URL.createObjectURL(blob);
           console.log(url);
 
