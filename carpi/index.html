@@ -141,8 +141,8 @@ body{
 
       <h1>test</h1>
 
-      <button ng-click="startRecording(this);">record</button>
-      <button ng-click="stopRecording(this);" disabled>stop</button>
+      <button ng-click="startRecording(this);" disabled="recording">record</button>
+      <button ng-click="stopRecording(this);" disabled="!recording">stop</button>
 
       <h2>Recordings</h2>
       <ul id="recordingslist"></ul>
@@ -268,14 +268,15 @@ body{
       recorder.clear();
 
       recorder && recorder.record();
-      button.disabled = true;
-      button.nextElementSibling.disabled = false;
+      //button.disabled = true;
+      //button.nextElementSibling.disabled = false;
+      $scope.recording = true;
       __log('Recording...');
     }
 
     $scope.stopRecording = function(button) {
       recorder && recorder.stop();
-      button.disabled = true;
+      $scope.recording = false;
       button.previousElementSibling.disabled = false;
       __log('Stopped recording.');
 
