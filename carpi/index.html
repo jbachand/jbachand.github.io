@@ -8,7 +8,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
-  <script src="testaudio/js/audioRecord.js"></script>
 
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
@@ -307,7 +306,7 @@ body{
         li2.appendChild(link);
         document.getElementById("recordingslist").appendChild(li2);
       });
-      
+
         __log('Exporting to mp3');
         var b = Date.now();
 
@@ -355,4 +354,6 @@ body{
 
   }
 </script>
+<script src="js/audioRecord.js"></script>
+
 </html>
