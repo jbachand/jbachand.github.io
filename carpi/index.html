@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test9</h1>
+      <h1>test10</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -287,24 +287,24 @@ body{
     }
 
     function createDownloadLink() {
-      __log('Exporting to OGG');
+      __log('Exporting to WAV');
       var c = Date.now();
-      recorder.exportOGG(function(blob) {
+      recorder.exportWAV(function(blob) {
         var a = Date.now();
-        __log('OGG file successfully exported');
-        __log('OGG Processed in ' + (a -c) + 'ms' );
+        __log('WAV file successfully exported');
+        __log('WAV Processed in ' + (a -c) + 'ms' );
         console.log(blob);
         $scope.getMeta(blob);
-        
+
         var url = URL.createObjectURL(blob);
 
         console.log(url);
 
         var link = document.createElement('a');
         link.href = url;
-        link.innerHTML = "Recording #" + recording + "in ogg";
+        link.innerHTML = "Recording #" + recording + "in WAV";
 
-        link.download = "example.ogg";
+        link.download = "example.WAV";
 
         var li2 = document.createElement('li');
         li2.appendChild(link);
