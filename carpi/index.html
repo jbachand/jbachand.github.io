@@ -137,7 +137,7 @@ body{
 
 
 
-    <div class="app"  >
+    <div class="app"  ng-init="recording=false">
 
       <h1>test</h1>
 
@@ -277,7 +277,7 @@ body{
     $scope.stopRecording = function(button) {
       recorder && recorder.stop();
       $scope.recording = false;
-      button.previousElementSibling.disabled = false;
+      //button.previousElementSibling.disabled = false;
       __log('Stopped recording.');
 
 
