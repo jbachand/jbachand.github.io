@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test15</h1>
+      <h1>test16</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -204,7 +204,7 @@ body{
 
       reader.onloadend = function() {
         var requestTextDecoded = reader.result;
-        console.log(base64data );
+        //console.log(base64data );
 
 
         var fd = new FormData();
