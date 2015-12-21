@@ -221,6 +221,26 @@ body{
 
       console.log('form is ', fd);
 
+      var fdn={};
+      fdn["messageHeader"] = {
+        "deviceContext": [
+      {
+        "name":"playbackState",
+        "namespace":"AudioPlayer",
+        "payload": {
+          "streamId": "1",
+          "offsetInMilliseconds": "0",
+          "playerActivity": "IDLE"
+        }
+      }]
+    };
+    fdn["messageBody"] = {
+      "profile": "alexa-close-talk",
+      "locale": "en-us",
+      "format": "audio/L16; rate=16000; channels=1"
+    };
+    fdn["audio"] = soundBlob;
+
 
       $http({
         method: 'POST',
@@ -228,7 +248,7 @@ body{
         headers: {
           "Authorization": "Bearer "+$scope.accessToken
         },
-        data: fd
+        data: fdn
       }).
       success(function(data){
         console.log("success sending");
@@ -343,7 +363,6 @@ body{
 
       audioRecorder.requestDevice(function(recorderObject){
         recorder = recorderObject;
-        console.log('returned ', recorderObject);
       }, {recordAsOGG: false});
 
       //$scope.getMeta();
