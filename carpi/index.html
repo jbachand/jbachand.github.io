@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test7</h1>
+      <h1>test8</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -200,21 +200,23 @@ body{
       var reqData ={};
       console.log('sound blob', soundBlob);
       var fd = new FormData();
-      fd.append("request", {"messageHeader": {"deviceContext": [
-      {
-        "name":"playbackState",
-        "namespace":"AudioPlayer",
-        "payload": {
-          "streamId": "1",
-          "offsetInMilliseconds": "0",
-          "playerActivity": "IDLE"
-        }
-      }]
-    },"messageBody":{
-        "profile": "alexa-close-talk",
-        "locale": "en-us",
-        "format": "audio/L16; rate=16000; channels=1"
-      }});
+      fd.append("request", new Blob([JSON.stringify({"messageHeader": {"deviceContext": [
+    {
+      "name":"playbackState",
+      "namespace":"AudioPlayer",
+      "payload": {
+        "streamId": "1",
+        "offsetInMilliseconds": "0",
+        "playerActivity": "IDLE"
+      }
+    }]
+  },"messageBody":{
+    "profile": "alexa-close-talk",
+    "locale": "en-us",
+    "format": "audio/L16; rate=16000; channels=1"
+  }})], {
+        type: "application/json"
+      }));
       //var soundBlob="";
       fd.append('audio', soundBlob);
 
