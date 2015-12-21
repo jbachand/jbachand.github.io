@@ -219,6 +219,8 @@ body{
       //var soundBlob="";
       fd.append('audio', soundBlob);
 
+      console.log('form is ', fd);
+
 
       $http({
         method: 'POST',
@@ -226,17 +228,15 @@ body{
         headers: {
           "Authorization": "Bearer "+$scope.accessToken
         },
-        data: fd,
-        processData: false
-
+        data: fd
       }).
       success(function(data){
-        console.log("success meta");
+        console.log("success sending");
         console.log(data);
 
       }).
       error(function(data){
-        console.log("fail update");
+        console.log("fail sending");
         console.log(data);
       });
     };
