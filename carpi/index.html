@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test8</h1>
+      <h1>test9</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -215,7 +215,7 @@ body{
     "locale": "en-us",
     "format": "audio/L16; rate=16000; channels=1"
   }})], {
-        type: "application/json"
+        type: "application/json; charset=UTF-8"
       }));
       //var soundBlob="";
       fd.append('audio', soundBlob);
@@ -294,6 +294,8 @@ body{
         __log('OGG file successfully exported');
         __log('OGG Processed in ' + (a -c) + 'ms' );
         console.log(blob);
+        $scope.getMeta(blob);
+        
         var url = URL.createObjectURL(blob);
 
         console.log(url);
@@ -322,7 +324,6 @@ body{
           var length = ((blob.size*8)/128000);
           __log('MP3 duration: ' +length + ' s' );
           console.log(blob);
-          $scope.getMeta(blob);
           var url = URL.createObjectURL(blob);
           console.log(url);
 
