@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test13</h1>
+      <h1>test14</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -198,24 +198,39 @@ body{
 
     $scope.getMeta = function(soundBlob){
 
-      var fd = new FormData();
-      fd.append("request", new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "1","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"}));
-      fd.append('audio', soundBlob);
+      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "1","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
+      var reader = new window.FileReader();
+      reader.readAsDataURL(blob);
 
-      $.ajax({
-        method: 'POST',
-        url:$scope.reqEndpoint+"/v1/avs/speechrecognizer/recognize",
-        headers: {
-          "Authorization": "Bearer "+$scope.accessToken
-        },
-        processData: false,
-        contentType:false,
-        data: fd,
-        success: function(data){
-          console.log("success sending");
-          console.log(data);
-        }
-      });
+      reader.onloadend = function() {
+        var requestTextDecoded = reader.result;
+        console.log(base64data );
+
+
+        var fd = new FormData();
+        fd.append("request", requestTextDecoded);
+        fd.append('audio', soundBlob);
+
+        $.ajax({
+          method: 'POST',
+          url:$scope.reqEndpoint+"/v1/avs/speechrecognizer/recognize",
+          headers: {
+            "Authorization": "Bearer "+$scope.accessToken
+          },
+          processData: false,
+          contentType:false,
+          data: fd,
+          success: function(data){
+            console.log("success sending");
+            console.log(data);
+          }
+        });
+
+
+
+      }
+
+
     };
 
     function __log(e, data) {
