@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test17</h1>
+      <h1>test18</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -208,7 +208,7 @@ body{
 
 
         var fd = new FormData();
-        fd.append("request", requestTextDecoded);
+        fd.append("request", requestText);
         fd.append('audio', soundBlob);
 
         $.ajax({
