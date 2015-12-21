@@ -306,10 +306,9 @@ body{
         var li2 = document.createElement('li');
         li2.appendChild(link);
         document.getElementById("recordingslist").appendChild(li2);
-
+      });
+      
         __log('Exporting to mp3');
-
-
         var b = Date.now();
 
         recorder.exportMP3(function(blob) {
@@ -335,7 +334,6 @@ body{
           li2.appendChild(link);
           document.getElementById("recordingslist").appendChild(li2);
 
-        });
 
       });
 
