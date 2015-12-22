@@ -24,7 +24,7 @@ body{
 
 </style>
 </head>
-<body ng-app="ngWink">
+<body ng-app="ngAlexa">
 
   <div id="container" ng-controller="appController">
 
@@ -47,12 +47,7 @@ body{
 </body>
 
 <script>
-
-  /**
-  * @Author Jeff Bachand
-  */
-
-  angular.module('ngWink',['ngRoute'])
+  angular.module('ngAlexa',['ngRoute'])
   .config( function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
 
@@ -76,6 +71,7 @@ body{
         $scope.accessToken = $location.hash().split('=')[1];
         $scope.accessToken = $scope.accessToken.split('&')[0];
         localStorage.accessTokenA = $scope.accessToken;
+        window.location.href = "/";
       }
 
     }
@@ -89,7 +85,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '59';
+    $scope.v = '60';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -126,6 +122,9 @@ body{
             console.log(" sending complete");
             console.log(data);
 
+          },
+          error: function(data, code){
+            console.log('error', data, code);
           }
         });
 
