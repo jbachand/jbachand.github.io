@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '41';
+    $scope.v = '42';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -216,7 +216,7 @@ body{
 
         $.ajax({
           method: 'POST',
-          url:$scope.reqEndpoint+"/v1/avs/speechrecognizer/recognize",
+          url:$scope.reqEndpoint+"/v1/avs/speechrecognizer/",
           headers: {
             "Authorization": "Bearer "+$scope.accessToken
           },
