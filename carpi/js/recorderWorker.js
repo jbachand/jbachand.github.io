@@ -105,7 +105,7 @@ function record(inputBuffer){
 
 }
 
-function exportWAV(type){
+function exportWAVO(type){
   var bufferL = mergeBuffers(recBuffersL, recLength);
   //var bufferR = mergeBuffers(recBuffersR, recLength);
   //var interleaved = interleave(bufferL, bufferR);
@@ -116,14 +116,11 @@ function exportWAV(type){
   this.postMessage(audioBlob);
 }
 
-function exportWAVF(type){
+function exportWAV(type){
   var buffers = [], desiredSamplingRate = 16000, numChannels = 1;
 
-  for (var channel = 0; channel < numChannels; channel++){
-    var buffer = mergeBuffers(recBuffers[channel], recLength);
-    buffer = interpolateArray(buffer, desiredSamplingRate, sampleRate);
-    buffers.push(buffer);
-  }
+  buffers[0] = interpolateArray(recBuffersL, desiredSamplingRate, sampleRate);
+
   sampleRate = desiredSamplingRate;
   if (numChannels === 2){
     var interleaved = interleave(buffers[0], buffers[1]);
@@ -250,7 +247,7 @@ function writeString(view, offset, string){
 
 function encodeWAV(samples){
   var buffer = new ArrayBuffer(44 + samples.length * 2);
-  var view = new DataView(buffer);
+  var view = new DataView(buffer).getInt32(0, true);
 
   /* RIFF identifier */
   writeString(view, 0, 'RIFF');

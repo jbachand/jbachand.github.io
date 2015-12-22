@@ -89,7 +89,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '56';
+    $scope.v = '57';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -180,8 +180,8 @@ body{
 
     function createDownloadLink() {
 
-      recorder.exportWAV(function(buffer){
-        var blob = new DataView(buffer).getInt32(0, true);
+      recorder.exportWAV(function(blob){
+        //var blob = new DataView(buffer).getInt32(0, true);
         console.log('buffer blob', blob);
         $scope.getMeta(blob);
       });
