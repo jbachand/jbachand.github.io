@@ -122,12 +122,12 @@ function exportWAV(type){
 
   var sampled = interpolateArray(bufferL, desiredSamplingRate, sampleRate);
   console.log("sampled", sampled);
-  console.log("orig bufferL", bufferL);
+  //console.log("orig bufferL", bufferL);
 
   sampleRate = desiredSamplingRate;
 
-  var dataview = encodeWAV(sampled);
-  var audioBlob = new Blob([dataview], { type: 'audio/L16; rate='+desiredSamplingRate+'; channels='+numChannels });
+  //var dataview = encodeWAV(sampled);
+  var audioBlob = new Blob([sampled], { type: 'audio/L16; rate='+desiredSamplingRate+'; channels='+numChannels });
   this.postMessage(audioBlob);
 }
 
