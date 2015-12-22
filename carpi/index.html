@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '39';
+    $scope.v = '40';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -254,7 +254,7 @@ body{
         audioRecorder.requestDevice(function(recorderObject){
           recorder = recorderObject;
           startRecording(button);
-        }, {recordAsOGG: true});
+        }, {recordAsOGG: false});
         return false;
       }
 
