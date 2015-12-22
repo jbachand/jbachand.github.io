@@ -109,7 +109,7 @@ body{
         if($scope.hashCode == localStorage.hashCode){
           $scope.v = localStorage.v;
         } else {
-          localStorage.v = localStorage.v+1;
+          localStorage.v = parseInt(localStorage.v)+1;
           localStorage.hashCode = $scope.hashCode;
           $scope.v = localStorage.v;
         }
