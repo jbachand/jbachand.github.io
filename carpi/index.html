@@ -85,7 +85,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '61';
+    $scope.v = '62';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -125,6 +125,9 @@ body{
           },
           error: function(data, code){
             console.log('error', data, code);
+            if(data.code==403){
+              $scope.logout();
+            }
           }
         });
 
