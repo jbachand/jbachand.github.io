@@ -136,6 +136,7 @@
 		  window.URL = window.URL || window.webkitURL;
 
 		  audio_context = new AudioContext;
+      console.log('sample rate', audio_context.sampleRate);
 
 		  navigator.getUserMedia({audio: true}, function(stream){
         console.log('success');
