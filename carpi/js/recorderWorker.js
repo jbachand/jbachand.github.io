@@ -111,7 +111,7 @@ function exportWAV(type){
   //var interleaved = interleave(bufferL, bufferR);
   //var dataview = encodeWAV(interleaved);
   var dataview = encodeWAV(bufferL);
-  var audioBlob = new Blob([dataview], { type: type });
+  var audioBlob = new Blob([dataview]);
 
   this.postMessage(audioBlob);
 }
@@ -301,7 +301,7 @@ var MP3Encoder = function(config){
 
   function init(config){
 
-    mp3encoder = new lib.Mp3Encoder(config.cannels ||1, config.sampleRate ||  44100, config.bitRate ||128); //mono 44.1khz encode to 128kbps
+    mp3encoder = new lib.Mp3Encoder(config.cannels ||1, config.sampleRate ||  16000, config.bitRate ||128); //mono 44.1khz encode to 128kbps
   }
 
   function encode(buffer){

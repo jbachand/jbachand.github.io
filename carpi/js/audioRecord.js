@@ -64,7 +64,7 @@
 
 		this.exportWAV = function(cb, type){
 			currCallback = cb || config.callback;
-			type = type || config.type || 'audio/L16; rate=44100; channels=1';
+			type = type || config.type || 'audio/L16; rate=16000; channels=1';
 			if (!currCallback) throw new Error('Callback not set');
 
 			worker.postMessage({
@@ -136,7 +136,6 @@
 		  window.URL = window.URL || window.webkitURL;
 
 		  audio_context = new AudioContext;
-      console.log('sample rate', audio_context.sampleRate);
 
 		  navigator.getUserMedia({audio: true}, function(stream){
         console.log('success');
