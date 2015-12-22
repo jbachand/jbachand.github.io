@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '30';
+    $scope.v = '31';
     var source;
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -211,7 +211,7 @@ body{
       console.log('soundblob2', soundBlob2, 'soundblob', soundBlob);
         var fd = new FormData();
         fd.append("request", requestText);
-        fd.append('audio', soundBlob[0]);
+        fd.append('audio', soundBlob2);
         source = audioCtx.createBufferSource();
 
         $.ajax({
@@ -226,7 +226,7 @@ body{
           success: function(data){
             console.log(" sending complete");
             console.log(data);
-            audioCtx.decodeAudioData(soundBlob, function(buffer) {
+            audioCtx.decodeAudioData(soundBlob[0], function(buffer) {
               source.buffer = buffer;
 
               source.connect(audioCtx.destination);
