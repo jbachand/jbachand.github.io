@@ -138,7 +138,7 @@ body{
           }
         };
 
-      var requestText = new Blob([JSON.stringify(requeset)], {type: "application/json; charset=UTF-8"});
+      var requestText = new Blob([JSON.stringify(request)], {type: "application/json; charset=UTF-8"});
 
         var fd = new FormData();
         fd.append("request", requestText);
