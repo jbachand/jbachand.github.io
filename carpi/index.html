@@ -124,7 +124,7 @@ body{
       var reader = new window.FileReader();
       reader.readAsDataURL(soundBlob);
       reader.onloadend = function(event) {
-        var base64data = reader.result;
+        var base64data = event.target.result;
         console.log('audio base64', reader, event);
         //console.log(base64data );
         $('audio').attr('src', base64data);
@@ -146,7 +146,7 @@ body{
         fd.append("request", requestText);
         fd.append('audio', soundBlob);
 
-        var cdata = '\r\n--BLAH1234\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{"messageHeader":{}, "messageBody":{"profile":"alexa-close-talk", "locale":"en-us", "format":"audio/L16; rate=16000; channels=1"}}\r\n--BLAH1234\r\nContent-Disposition: form-data; name="audio"\r\nContent-Type: audio/L16; rate=16000; channels=1\r\n\r\n'+base64data.replace('data:audio/l16; rate=16000; channels=1;base64,','')+'\r\n--BLAH1234--\r\n';
+        var cdata = '\r\n--BLAH1234\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{"messageHeader":{}, "messageBody":{"profile":"alexa-close-talk", "locale":"en-us", "format":"audio/L16; rate=16000; channels=1"}}\r\n\r\n--BLAH1234\r\nContent-Disposition: form-data; name="audio"\r\nContent-Type: audio/L16; rate=16000; channels=1\r\n\r\n'+soundBlob+'\r\n--BLAH1234--\r\n';
 
 
         $.ajax({
