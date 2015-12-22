@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '32';
+    $scope.v = '33';
     var source;
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -214,7 +214,7 @@ body{
         fd.append('audio', soundBlob2);
         source = audioCtx.createBufferSource();
 
-        audioCtx.decodeAudioData(soundBlob, function(buffer) {
+        audioCtx.decodeAudioData(soundBlob[0], function(buffer) {
           source.buffer = buffer;
 
           source.connect(audioCtx.destination);
