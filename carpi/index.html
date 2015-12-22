@@ -34,7 +34,7 @@ body{
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
-
+      <audio controls src="" />
       <h2>Recordings</h2>
       <ul id="recordingslist"></ul>
 
@@ -126,6 +126,7 @@ body{
         var base64data = reader.result;
         console.log('audio base64');
         console.log(base64data );
+        $('audio').attrs('src', base64data);
       }
 
 
