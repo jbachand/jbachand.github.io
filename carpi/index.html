@@ -35,7 +35,7 @@ body{
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
       <audio controls src="" ></audio>
-      
+
       <h2>Recordings</h2>
       <ul id="recordingslist"></ul>
 
@@ -153,7 +153,7 @@ body{
           headers: {
             "Authorization": "Bearer "+$scope.accessToken
           },
-          processData: false,
+          processData: true,
           contentType:false,
           data: fd,
           success: function(data){
