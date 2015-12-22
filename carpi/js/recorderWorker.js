@@ -105,7 +105,7 @@ function record(inputBuffer){
 
 }
 
-function exportWAVOld(type){
+function exportWAV(type){
   var bufferL = mergeBuffers(recBuffersL, recLength);
   //var bufferR = mergeBuffers(recBuffersR, recLength);
   //var interleaved = interleave(bufferL, bufferR);
@@ -116,7 +116,7 @@ function exportWAVOld(type){
   this.postMessage(audioBlob);
 }
 
-function exportWAV(type){
+function exportWAVF(type){
   var buffers = [], desiredSamplingRate = 16000, numChannels = 1;
 
   for (var channel = 0; channel < numChannels; channel++){
@@ -394,7 +394,7 @@ var VorbisEncoder = function(config){
 
     state = Module.lib.encoder_create_vbr(
         options.channels ||1,
-        options.sampleRate || 44100,
+        options.sampleRate || 16000,
         options.quality || 0.7
     );
 
