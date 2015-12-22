@@ -85,7 +85,37 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '62';
+    String.prototype.hashCode = function() {
+      var hash = 0, i, chr, len;
+      if (this.length === 0) return hash;
+      for (i = 0, len = this.length; i < len; i++) {
+        chr   = this.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+      }
+      return hash;
+    };
+
+    $scope.v = '64';
+    if(!localStorage.v){localStorage.v = $scope.v;}
+
+
+    $.ajax({
+      method: 'GET',
+      url: 'index.html',
+      success: function(data){
+        $scope.hashCode = data.hashCode();
+        console.log('hash compare', $scope.hashCode, localStorage.hashCode);
+        if($scope.hashCode == localStorage.hashCode){
+          $scope.v = localStorage.v;
+        } else {
+          localStorage.v = localStorage.v+1;
+          localStorage.hashCode = $scope.hashCode;
+          $scope.v = localStorage.v;
+        }
+      }
+    })
+
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -125,7 +155,7 @@ body{
           },
           error: function(data, code){
             console.log('error', data, code);
-            if(data.code==403){
+            if(data.status==403){
               $scope.logout();
             }
           }
