@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test20</h1>
+      <h1>test21</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -198,7 +198,7 @@ body{
 
     $scope.getMeta = function(soundBlob){
 
-      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "1","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
+      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
       var reader = new window.FileReader();
       reader.readAsDataURL(soundBlob);
 
@@ -278,6 +278,11 @@ body{
     }
 
     function createDownloadLink() {
+
+      recorder.getBuffer(function(blob){
+        console.log('buffer blob', blob);
+      });
+
       __log('Exporting to WAV');
       var c = Date.now();
       recorder.exportWAV(function(blob) {
