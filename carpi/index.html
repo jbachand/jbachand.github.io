@@ -89,10 +89,18 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '52';
+    $scope.v = '53';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
+
+      var reader = new window.FileReader();
+      reader.readAsDataURL(soundBlob);
+      reader.onloadend = function() {
+        var base64data = reader.result;
+        console.log('audio base64');
+        console.log(base64data );
+      }
 
       var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
       var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
@@ -172,7 +180,8 @@ body{
 
     function createDownloadLink() {
 
-      recorder.exportMP3(function(blob){
+      recorder.getBuffer(function(buffer){
+        var blob = new DataView(buffer).getInt32(0, true)
         console.log('buffer blob', blob);
         $scope.getMeta(blob);
       });
