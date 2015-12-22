@@ -128,7 +128,7 @@ function exportWAV(type){
 
   var dataview = encodeWAV(sampled);
   var audioBlob = new Blob([dataview], { type: 'audio/L16; rate='+desiredSamplingRate+'; channels='+numChannels });
-  this.postMessage(audioBlob);
+  this.postMessage(sampled);
 }
 
 // for changing the sampling rate, data,
