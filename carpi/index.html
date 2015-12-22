@@ -196,25 +196,25 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '33';
+    $scope.v = '34';
     var source;
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 
     $scope.getMeta = function(soundBlob){
 
-      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=44100; channels=1"}})], {type: "application/json; charset=UTF-8"});
-      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=44100; channels=1"}})], {type: "application/json; charset=UTF-8"});
+      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
+      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
 
-      var soundBlob2 = new Blob([soundBlob[0]], {type: "audio/L16; rate=44100; channels=1"});
+      var soundBlob2 = new Blob([soundBlob[0]], {type: "audio/L16; rate=16000; channels=1"});
 
-      console.log('soundblob2', soundBlob2, 'soundblob', soundBlob);
+      console.log('soundblob2', soundBlob2, typeof soundBlob2, 'soundblob', soundBlob, typeof soundBlob);
         var fd = new FormData();
         fd.append("request", requestText);
         fd.append('audio', soundBlob2);
         source = audioCtx.createBufferSource();
 
-        audioCtx.decodeAudioData(soundBlob[0], function(buffer) {
+        audioCtx.decodeAudioData(soundBlob2, function(buffer) {
           source.buffer = buffer;
 
           source.connect(audioCtx.destination);
