@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '28';
+    $scope.v = '29';
     var source;
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -206,13 +206,12 @@ body{
       var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=44100; channels=1"}})], {type: "application/json; charset=UTF-8"});
       var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=44100; channels=1"}})], {type: "application/json; charset=UTF-8"});
 
-      var soundBlob2 = new Blob([soundBlob], {type: "audio/L16; rate=44100; channels=1"});
+      var soundBlob2 = new Blob([soundBlob[0]], {type: "audio/L16; rate=44100; channels=1"});
 
       console.log('soundblob2', soundBlob2, 'soundblob', soundBlob);
         var fd = new FormData();
         fd.append("request", requestText);
-        soundBlob = null;
-        fd.append('audio', soundBlob2);
+        fd.append('audio', soundBlob[0]);
         source = audioCtx.createBufferSource();
 
         $.ajax({
@@ -291,7 +290,7 @@ body{
 
       recorder.getBuffer(function(blob){
         console.log('buffer blob', blob);
-        $scope.getMeta(blob[0]);
+        $scope.getMeta(blob);
       });
 
       /*__log('Exporting to WAV');
