@@ -247,7 +247,7 @@ function writeString(view, offset, string){
 
 function encodeWAV(samples){
   var buffer = new ArrayBuffer(44 + samples.length * 2);
-  var view = new DataView(buffer).getInt32(0, true);
+  var view = new DataView(buffer);//.getInt32(0, true);
 
   /* RIFF identifier */
   writeString(view, 0, 'RIFF');
