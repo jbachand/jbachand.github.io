@@ -89,7 +89,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '49';
+    $scope.v = '50';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -104,8 +104,6 @@ body{
         fd.append("request", requestText);
         fd.append('audio', soundBlob);
 
-        $scope.player.src = window.URL.createObjectURL(soundBlob2);
-        $scope.player.play();
 
         $.ajax({
           method: 'POST',
