@@ -137,7 +137,7 @@ body{
 
     <div class="app"  ng-init="recording=false">
 
-      <h1>test21</h1>
+      <h1>test22</h1>
 
       <button ng-click="startRecording(this);" ng-if="!recording">record</button>
       <button ng-click="stopRecording(this);" ng-if="recording">stop</button>
@@ -198,20 +198,24 @@ body{
 
     $scope.getMeta = function(soundBlob){
 
-      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
+      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=44100; channels=1"}})], {type: "application/json; charset=UTF-8"});
+      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=44100; channels=1"}})], {type: "application/json; charset=UTF-8"});
+
+      var soundBlob2 = new Blob([soundBlob], {type: "audio/L16; rate=44100; channels=1"});
+
       var reader = new window.FileReader();
       reader.readAsDataURL(soundBlob);
 
       reader.onloadend = function() {
-        var soundBlob2 = reader.result;
+        //var soundBlob2 = reader.result;
         //console.log(base64data );
 
 
         var fd = new FormData();
         fd.append("request", requestText);
-        console.log('audio blob decoded', soundBlob);
+        console.log('audio blob decoded', soundBlob2);
         soundBlob = null;
-        fd.append('audio', soundBlob);
+        fd.append('audio', soundBlob2);
 
         $.ajax({
           method: 'POST',
@@ -281,6 +285,7 @@ body{
 
       recorder.getBuffer(function(blob){
         console.log('buffer blob', blob);
+        $scope.getMeta(blob[1])
       });
 
       __log('Exporting to WAV');
@@ -290,7 +295,7 @@ body{
         __log('WAV file successfully exported');
         __log('WAV Processed in ' + (a -c) + 'ms' );
         console.log(blob);
-        $scope.getMeta(blob);
+        //$scope.getMeta(blob);
 
         var url = URL.createObjectURL(blob);
 
