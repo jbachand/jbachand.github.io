@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '27';
+    $scope.v = '28';
     var source;
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -212,7 +212,7 @@ body{
         var fd = new FormData();
         fd.append("request", requestText);
         soundBlob = null;
-        fd.append('audio', soundBlob);
+        fd.append('audio', soundBlob2);
         source = audioCtx.createBufferSource();
 
         $.ajax({
