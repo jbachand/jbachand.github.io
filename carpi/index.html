@@ -123,9 +123,9 @@ body{
 
       var reader = new window.FileReader();
       reader.readAsDataURL(soundBlob);
-      reader.onloadend = function() {
+      reader.onloadend = function(event) {
         var base64data = reader.result;
-        console.log('audio base64', reader);
+        console.log('audio base64', reader, event);
         //console.log(base64data );
         $('audio').attr('src', base64data);
 
