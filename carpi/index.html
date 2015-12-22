@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '23';
+    $scope.v = '24';
 
     $scope.getMeta = function(soundBlob){
 
@@ -280,10 +280,10 @@ body{
 
       recorder.getBuffer(function(blob){
         console.log('buffer blob', blob);
-        $scope.getMeta(blob[1])
+        $scope.getMeta(blob[1]);
       });
 
-      __log('Exporting to WAV');
+      /*__log('Exporting to WAV');
       var c = Date.now();
       recorder.exportWAV(function(blob) {
         var a = Date.now();
@@ -334,7 +334,7 @@ body{
           document.getElementById("recordingslist").appendChild(li2);
         });
 
-      });
+      });*/
 
     }
 
