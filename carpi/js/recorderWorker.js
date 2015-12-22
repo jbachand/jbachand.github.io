@@ -126,8 +126,8 @@ function exportWAV(type){
 
   sampleRate = desiredSamplingRate;
 
-  var dataview = encodeWAV(sampled);
-  var audioBlob = new Blob([dataview], { type: 'audio/WAV; rate='+desiredSamplingRate+'; channels='+numChannels });
+  //var dataview = encodeWAV(sampled);
+  var audioBlob = new Blob([sampled], { type: 'audio/L16; rate='+desiredSamplingRate+'; channels='+numChannels });
   this.postMessage(audioBlob);
 }
 
@@ -246,7 +246,7 @@ function writeString(view, offset, string){
 
 function encodeWAV(samples){
   var buffer = new ArrayBuffer(44 + samples.length * 2);
-  var view = new DataView(buffer).getInt32(0, true);
+  var view = new DataView(buffer);//.getInt32(0, true);
 
   /* RIFF identifier */
   writeString(view, 0, 'RIFF');
