@@ -72,7 +72,7 @@ body{
         $scope.accessToken = $location.hash().split('=')[1];
         $scope.accessToken = $scope.accessToken.split('&')[0];
         localStorage.accessTokenA = $scope.accessToken;
-        window.location.href = "/";
+        window.location.href = "/carpi/";
       }
 
     }
@@ -204,6 +204,7 @@ body{
 
     $scope.stopRecording = function(button) {
       recorder && recorder.stop();
+      console.log('rawblob?', recorder.getBlob());
       $scope.recording = false;
       //button.previousElementSibling.disabled = false;
       __log('Stopped recording.');
