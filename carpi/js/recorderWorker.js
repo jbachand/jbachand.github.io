@@ -117,7 +117,7 @@ function exportWAVOld(type){
 }
 
 function exportWAV(type){
-  var buffers = [], desiredSamplingRate = 16000;
+  var buffers = [], desiredSamplingRate = 16000, numChannels = 1;
 
   for (var channel = 0; channel < numChannels; channel++){
     var buffer = mergeBuffers(recBuffers[channel], recLength);
