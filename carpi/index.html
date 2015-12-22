@@ -204,7 +204,7 @@ body{
 
     $scope.stopRecording = function(button) {
       recorder && recorder.stop();
-      console.log('rawblob?', recorder.getBlob());
+      //console.log('rawblob?', recorder.getBlob());
       $scope.recording = false;
       //button.previousElementSibling.disabled = false;
       __log('Stopped recording.');
