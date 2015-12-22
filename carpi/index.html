@@ -196,10 +196,8 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '34';
-    var source;
-    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
+    $scope.v = '35';
+    $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
 
@@ -212,16 +210,9 @@ body{
         var fd = new FormData();
         fd.append("request", requestText);
         fd.append('audio', soundBlob2);
-        source = audioCtx.createBufferSource();
 
-        audioCtx.decodeAudioData(soundBlob2, function(buffer) {
-          source.buffer = buffer;
-
-          source.connect(audioCtx.destination);
-          source.loop = true;
-        },
-
-        function(e){"Error with decoding audio data" + e.err});
+        $scope.player.src = window.URL.createObjectURL(soundBlob2);
+        $scope.player.play();
 
         $.ajax({
           method: 'POST',
