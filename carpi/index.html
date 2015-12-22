@@ -18,122 +18,15 @@
 
 <style>
 body{
+  background-color:black;
+  color:white;
 }
-.modal-header h1{
-  color: #2AB1DD;
-  letter-spacing: 0.03em;
-  font-size: 50pt;
-  font-weight: 600;
-}
-.app{
-}
-.header{
-  background-color: #2AB1DD;
-  color: #FFF;
-  font-size: 40pt;
-  padding-left: 100px;
-  text-shadow: 1px 1px 1px #666;
-}
-.header .btn{
-  background-color: #FFF;
-  color: #396D98;
-  border-right: 2px solid #428BCA;
-  border-bottom: 2px solid #428BCA;
-  margin-right: 50px;
-}
-.devices{
-  padding-left: 50px;
-  padding-right: 50px;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding-top: 10px;
-  padding-bottom: 20px;
-  border-bottom: 10px #FFF solid;
-}
-.device{
-  display: inline-block;
-  text-align: center;
-  background-color: #FFF;
-  margin-right: 10px;
-  cursor: pointer;
-  text-transform: capitalize;
-  position: relative;
-  border-radius: 5px;
-  border-bottom: 2px solid #AAA;
-  border-right: 1px solid #AAA;
-}
-.device.selected{
-  border: 2px solid #52AAC7;
-}
-.device .percent{
-  position: absolute;
-  top: 40%;
-  left: 35%;
-  font-size: 20pt;
-  color: #FFF;
-  text-shadow: 1px 1px 1px #666;
-}
-.selectedDevice{
-  width: 350px;
-  min-height: 130px;
-  margin-right: 100px;
-  background-color: #FFF;
-  border-radius: 5px;
-  border: 1px solid #CCC;
-  border-bottom: 2px solid #666;
-  padding: 20px;
-  text-transform: capitalize;
-  border-right: 2px solid #AAA;
-}
-.selectedDevice h2{
-  margin-top:0px;
-}
-.toggle{
-  display: block;
-  position: absolute;
-}
-.loginError{
-  border-radius: 30px;
-  width: 100%;
-  line-height: 60px;
-  text-align: center;
-  color: #FFF;
-  background-color: #DF3F3F;
-  height: 60px;
-  font-size: 18pt;
-  letter-spacing: 0.03em;
-  font-weight: 400;
-}
-.statusAlert{
-  border-radius: 30px;
-  width: 170px;
-  line-height: 40px;
-  text-align: center;
-  color: #FFF;
-  height: 40px;
-  font-size: 18pt;
-  letter-spacing: 0.08em;
-  font-weight: 400;
-  display: inline-block;
-  text-transform: capitalize;
 
-  }
-.statusAlert.tada{
-  background-color: #DF3F3F;
-}
-.statusAlert.pulse{
-  background-color: #4CB54C;
-  border-bottom: 2px solid #008000
-}
-.devices>h2{
-  height:38px;
-}
 </style>
 </head>
 <body ng-app="ngWink">
 
   <div id="container" ng-controller="appController">
-
-
 
     <div class="app"  ng-init="recording=false">
 
@@ -196,7 +89,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '47';
+    $scope.v = '48';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
