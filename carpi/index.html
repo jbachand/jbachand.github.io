@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '38';
+    $scope.v = '39';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -209,7 +209,7 @@ body{
       console.log('soundblob2', soundBlob2, typeof soundBlob2, 'soundblob', soundBlob, typeof soundBlob);
         var fd = new FormData();
         fd.append("request", requestText);
-        fd.append('audio', soundBlob[0]);
+        fd.append('audio', soundBlob2);
 
         $scope.player.src = window.URL.createObjectURL(soundBlob2);
         $scope.player.play();
@@ -254,7 +254,7 @@ body{
         audioRecorder.requestDevice(function(recorderObject){
           recorder = recorderObject;
           startRecording(button);
-        }, {recordAsOGG: false});
+        }, {recordAsOGG: true});
         return false;
       }
 
