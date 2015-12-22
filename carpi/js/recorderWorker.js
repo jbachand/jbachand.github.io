@@ -118,11 +118,15 @@ function exportWAVO(type){
 
 function exportWAV(type){
   var buffers = [], desiredSamplingRate = 16000, numChannels = 1;
+  var bufferL = mergeBuffers(recBuffersL, recLength);
 
-  interleaved = interpolateArray(recBuffersL, desiredSamplingRate, sampleRate);
+  var sampled = interpolateArray(bufferL, desiredSamplingRate, sampleRate);
+  console.log("sampled", sampled);
+  console.log("orig bufferL", bufferL);
+  
   sampleRate = desiredSamplingRate;
 
-  var dataview = encodeWAV(interleaved);
+  var dataview = encodeWAV(sampled);
   var audioBlob = new Blob([dataview], { type: 'audio/L16; rate='+desiredSamplingRate+'; channels='+numChannels });
   this.postMessage(audioBlob);
 }

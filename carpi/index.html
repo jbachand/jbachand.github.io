@@ -128,8 +128,17 @@ body{
         console.log(base64data );
       }
 
-      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
-      var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
+
+      var request = {"messageHeader":
+        {"deviceContext": [
+          {"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}
+        ]},
+        "messageBody":{
+          "profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"
+          }
+        };
+
+      var requestText = new Blob([JSON.stringify(requeset)], {type: "application/json; charset=UTF-8"});
 
         var fd = new FormData();
         fd.append("request", requestText);
