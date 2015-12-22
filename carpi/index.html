@@ -96,16 +96,15 @@ body{
       return hash;
     };
 
-    $scope.v = '64';
-    if(!localStorage.v){localStorage.v = $scope.v;}
-//wololo
+    //version counter so i know its updated on the front end
+    $scope.v = 0;
+    if(!localStorage.v){localStorage.v = 0;}
 
     $.ajax({
       method: 'GET',
       url: 'index.html',
       success: function(data){
         $scope.hashCode = data.hashCode();
-        console.log('hash compare', $scope.hashCode, localStorage.hashCode);
         if($scope.hashCode == localStorage.hashCode){
           $scope.v = localStorage.v;
         } else {
