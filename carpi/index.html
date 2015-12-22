@@ -196,7 +196,7 @@ body{
       window.location.href=$scope.authEndpoint;
     };
 
-    $scope.v = '35';
+    $scope.v = '37';
     $scope.player = new window.Audio();
 
     $scope.getMeta = function(soundBlob){
@@ -204,7 +204,7 @@ body{
       var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
       var requestText = new Blob([JSON.stringify({"messageHeader": {"deviceContext": [{"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}]},"messageBody":{"profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"}})], {type: "application/json; charset=UTF-8"});
 
-      var soundBlob2 = new Blob([soundBlob[0]], {type: "audio/L16; rate=16000; channels=1"});
+      var soundBlob2 = new Blob(soundBlob[0], {type: "audio/L16; rate=16000; channels=1"});
 
       console.log('soundblob2', soundBlob2, typeof soundBlob2, 'soundblob', soundBlob, typeof soundBlob);
         var fd = new FormData();
@@ -346,7 +346,7 @@ body{
 
       audioRecorder.requestDevice(function(recorderObject){
         recorder = recorderObject;
-      }, {recordAsOGG: false});
+      }, {recordAsOGG: true});
 
       //$scope.getMeta();
     }
