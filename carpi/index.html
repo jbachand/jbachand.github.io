@@ -131,14 +131,7 @@ body{
 
 
 
-      var request = {"messageHeader":
-        {"deviceContext": [
-          {"name":"playbackState","namespace":"AudioPlayer","payload": {"streamId": "","offsetInMilliseconds": "0","playerActivity": "IDLE"}}
-        ]},
-        "messageBody":{
-          "profile": "alexa-close-talk","locale": "en-us","format": "audio/L16; rate=16000; channels=1"
-          }
-        };
+      var request = {"messageHeader":{}, "messageBody":{"profile":"alexa-close-talk", "locale":"en-us", "format":"audio/L16; rate=16000; channels=1"}};
 
       var requestText = new Blob([JSON.stringify(request)], {type: "application/json; charset=UTF-8"});
 
@@ -146,7 +139,7 @@ body{
         fd.append("request", requestText);
         fd.append('audio', soundBlob);
 
-        var cdata = '\r\n--BLAH1234\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{"messageHeader":{}, "messageBody":{"profile":"alexa-close-talk", "locale":"en-us", "format":"audio/L16; rate=16000; channels=1"}}\r\n\r\n--BLAH1234\r\nContent-Disposition: form-data; name="audio"\r\nContent-Type: audio/L16; rate=16000; channels=1\r\n\r\n'+soundBlob+'\r\n--BLAH1234--\r\n';
+      //  var cdata = '\r\n--BLAH1234\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{"messageHeader":{}, "messageBody":{"profile":"alexa-close-talk", "locale":"en-us", "format":"audio/L16; rate=16000; channels=1"}}\r\n\r\n--BLAH1234\r\nContent-Disposition: form-data; name="audio"\r\nContent-Type: audio/L16; rate=16000; channels=1\r\n\r\n'+soundBlob+'\r\n--BLAH1234--\r\n';
 
 
         $.ajax({
@@ -156,10 +149,10 @@ body{
             "Authorization": "Bearer "+$scope.accessToken
           },
           processData: false,
-          //contentType:false,
-          contentType: 'multipart/form-data; boundary=BLAH1234',
-          //data: fd
-          data: cdata,
+          contentType:false,
+          //contentType: 'multipart/form-data; boundary=BLAH1234',
+          data: fd
+          //data: cdata,
           success: function(data){
             console.log(" sending complete");
             console.log(data);
