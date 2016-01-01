@@ -129,6 +129,8 @@ body{
         //console.log(base64data );
         $('audio').attr('src', base64data);
 
+        console.log('audio encoded', window.btoa(base64data));
+
 
 
       var request = {"messageHeader":{}, "messageBody":{"profile":"alexa-close-talk", "locale":"en-us", "format":"audio/L16; rate=16000; channels=1"}};
