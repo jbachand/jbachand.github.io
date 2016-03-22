@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Webapp</title>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.15/angular-route.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.0/alertify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/alertify.js/0.4.0rc1/themes/alertify.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.3/animate.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<style>
+img{
+  max-width:200px;
+}
+
+</style>
+</head>
+<body ng-app="ngAlexa">
+
+  <div ng-controller="appController">
+    <div class="container">
+      <img ng-src="{{image}}" /><br>
+      <p ng-if="faces" ng-repeat="face in faces"> {{face.age.ageRange}} - {{face.gender.gender}} <span ng-if="face.identity.name">{{face.identity.name}}</span></p>
+    </div>
+  </div>
+</body>
+
+<script>
+  angular.module('ngAlexa',['ngRoute'])
+  .config( function($routeProvider, $locationProvider) {
+    $locationProvider.html5Mode(true);
+
+  });
+
+
+  var appController = function($scope,$rootScope,$http,$timeout,$routeParams,$location,$document){
+    $scope.devices = [];
+    $scope.key = 'afccc7d2dd21e64f6a1a2242771c00d8154566ad';
+    $scope.url = 'http://gateway-a.watsonplatform.net/calls/url/URLGetRankedImageFaceTags';
+    var search = $location.search();
+    console.log('search', search);
+    $scope.image = search.image?'http://i.imgur.com/'+search.image:'https://scontent-iad3-1.xx.fbcdn.net/hphotos-xfa1/t31.0-8/11174210_10100268982269625_51696746261031363_o.jpg';
+    $scope.faces = [];
+
+    $.ajax({
+      method: 'GET',
+      url: $scope.url+'?apikey='+$scope.key+'&url='+$scope.image+'&outputMode=json',
+      success: function(data){
+        $timeout(function(){
+          $scope.faces = data.imageFaces;
+          console.log('faces', $scope.faces);
+        })
+      }
+    })
+
+
+
+  }
+</script>
+
+</html>
