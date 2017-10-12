@@ -45,6 +45,9 @@
         ]).run(function($rootScope, kunaModel){
 
             var kunaModel = new kunaModel();
+                                                                
+            
+                                                                      
 
             $rootScope.auth = function(){
               kunaModel.auth($rootScope.email, $rootScope.password).success(function(data){
@@ -65,6 +68,12 @@
                   $rootScope.cameras = data;
               })
             }
+                                                                
+            $rootScope.token="00d242ac9c3b6e03410146ff3529411b6613fe99";                                                                    
+            kunaModel.headers.Authorization = "Token "+$rootScope.token;
+                                                      
+            $rootScope.getUser();
+            $rootScope.getCameras();                                                      
 
         }).factory('kunaModel', function($rootScope, $baseModel){
               return function(){
@@ -77,6 +86,7 @@
                         model.headers.Authorization = "Token "+data.token;
                       })
                   }
+                                                              
                   
                   model.user = function(){
                     model.route = "/api/v1/user/";
