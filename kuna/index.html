@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Kuna App</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.12/angular.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.12/angular-route.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+        <script type="text/javascript" src="angular-basemodel.js"></script>
+    </head>
+    <body ng-app="ngKuna">
+        <div id="container">
+            <h1>Kuna App</h1>
+            <form ng-if="!user" ng-submit="auth()">
+              <input type="text" ng-model="email" placeholder="email"><br />
+              <input type="password" ng-model="password" placeholder="password">
+              <input type="submit" name="Submit">Submit</input>
+             </form>
+             <div ng-if="user">
+                <h2>{{user.first_name}} {{user.last_name}}</h2>
+                <h3>Camera List</h3>
+                <div ng-repeat="camera in cameras.results>
+                  <strong>{{camera.name}}</strong><br />
+                  <img ng-src="{{camera.url}}/thumbnail/?live=0"/>
+                 </div>
+             </div>
+        </div>
+    </body>
+    <script>
+        'use strict';
+        /**
+        * @Author Jeff Bachand
+        */
+        angular.module('ngKuna', [
+            'angular-basemodel',
+        ]).run(function($rootScope, kunaModel){
+
+            var kunaModel = new kunaModel();
+
+            $rootScope.auth = function(){
+              kunaModel.auth().success(function(data){
+                  $rootScope.token = data.token;
+                  $rootScope.getUser();
+                  $rootScope.getCameras();
+              })
+            }
+            
+            $rootScope.getUser = function(){
+              kunaModel.user().success(function(data){
+                  $rootScope.user = data;
+              })
+            }
+            
+            $rootScope.getCameras = function(){
+              kunaModel.cameras().success(function(data){
+                  $rootScope.cameras = data;
+              })
+            }
+
+        }).factory('kunaModel', function($rootScope, $baseModel){
+              return function(){
+                  var model = angular.extend(new $baseModel(), {});
+                  model.url = "https://server.kunasystems.com";
+
+                  model.auth = function(email, password){
+                      model.route="/api/v1/account/auth/";
+                      return model.post().success(function(data){
+                        model.headers.Authorization = "Token "+data.token;
+                      })
+                  }
+                  
+                  model.user = function(){
+                    model.route = "/api/v1/user/";
+                    return model.get();
+                  }
+                  
+                  model.cameras = function(){
+                    model.route = "/api/v1/user/cameras/";
+                    return model.get();
+                  }
+
+                  return model;
+              }
+          });
+    </script>
+</html>
