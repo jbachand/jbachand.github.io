@@ -38,7 +38,7 @@
             var kunaModel = new kunaModel();
 
             $rootScope.auth = function(){
-              kunaModel.auth().success(function(data){
+              kunaModel.auth($rootScope.email, $rootScope.password).success(function(data){
                   $rootScope.token = data.token;
                   $rootScope.getUser();
                   $rootScope.getCameras();
@@ -60,11 +60,11 @@
         }).factory('kunaModel', function($rootScope, $baseModel){
               return function(){
                   var model = angular.extend(new $baseModel(), {});
-                  model.url = "https://server.kunasystems.com";
+                  model.url = "https://crossorigin.me/https://server.kunasystems.com";
 
                   model.auth = function(email, password){
                       model.route="/api/v1/account/auth/";
-                      return model.post().success(function(data){
+                      return model.post({email:email, password:password}).success(function(data){
                         model.headers.Authorization = "Token "+data.token;
                       })
                   }
