@@ -14,7 +14,7 @@
             <form ng-if="!user" ng-submit="auth()">
               <input type="text" ng-model="email" placeholder="email"><br />
               <input type="password" ng-model="password" placeholder="password">
-              <input type="submit" name="Submit">Submit</input>
+              <input type="submit" name="Submit">
              </form>
              <div ng-if="user">
                 <h2>{{user.first_name}} {{user.last_name}}</h2>
