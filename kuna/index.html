@@ -16,6 +16,14 @@
               <input type="password" ng-model="password" placeholder="password">
               <input type="submit" name="Submit">
              </form>
+            <div>
+                API Routes:<br />
+                <pre>
+                    POST https://server.kunasystems.com/api/v1/account/auth/ email,password
+                    GET https://server.kunasystems.com/api/v1/user/ Authorization: Token xxxxxxxxxxxxxxxxxx
+                </pre>
+            </div> 
+                
              <div ng-if="user">
                 <h2>{{user.first_name}} {{user.last_name}}</h2>
                 <h3>Camera List</h3>
@@ -60,7 +68,7 @@
         }).factory('kunaModel', function($rootScope, $baseModel){
               return function(){
                   var model = angular.extend(new $baseModel(), {});
-                  model.url = "http://www.whateverorigin.org/get?url=https://server.kunasystems.com";
+                  model.url = "https://server.kunasystems.com";
 
                   model.auth = function(email, password){
                       model.route="/api/v1/account/auth/";
