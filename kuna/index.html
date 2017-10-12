@@ -60,7 +60,7 @@
         }).factory('kunaModel', function($rootScope, $baseModel){
               return function(){
                   var model = angular.extend(new $baseModel(), {});
-                  model.url = "https://crossorigin.me/https://server.kunasystems.com";
+                  model.url = "http://anyorigin.com/go?url=https://server.kunasystems.com";
 
                   model.auth = function(email, password){
                       model.route="/api/v1/account/auth/";
