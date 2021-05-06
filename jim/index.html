@@ -45,10 +45,14 @@
                                                                                                                                       
             $rootScope.getResults = function() {
                 var results = [];
-                var permutations = getArrayMutations($rootScope.words.split(","));    
+                var words = $rootScope.words.split(",");
+                var permutations = getArrayMutations(words);    
                 permutations.forEach((mutation) => {
-                    console.log(mutation);
-                    results.push(JSON.stringify(mutation, ", "));
+                    var result = "";
+                    mutation.forEach((word, idx) => {
+                        result += word + " ";
+                    });
+                    results.push(result);
                 });
                 $rootScope.results = results;
             }                   
