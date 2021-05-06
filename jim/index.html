@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Jim App</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.12/angular.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.12/angular-route.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    </head>
+    <body ng-app="ngJim">
+        <div id="container">
+            <h1>Jim App</h1>
+            <form ng-submit="auth()">
+              <textarea type="text" ng-model="words" placeholder="words, text, things"></textarea>
+              <input type="submit" name="Submit">
+             </form>
+                
+             <div ng-if="results">
+                <h3>Word List</h3>
+                <div ng-repeat="camera in results">
+                  <strong>{{camera.name}}</strong><br />
+                  <img ng-src="{{camera.url}}/thumbnail/?live=0"/>
+                 </div>
+             </div>
+        </div>
+    </body>
+    <script>
+        'use strict';
+
+        angular.module('ngJim', [
+            'angular-basemodel',
+        ]).run(function($rootScope){
+                                                                                                                                      
+            $rootScope.auth = function(){
+              console.log($rootScope.words);
+            }                   
+
+        });
+    </script>
+</html>
