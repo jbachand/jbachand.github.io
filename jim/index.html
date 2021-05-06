@@ -43,8 +43,13 @@
               return perms;
             }
                                                                                                                                       
-            $rootScope.getResults = function(){
-                $rootScope.results = getArrayMutations($rootScope.words.split(","));                
+            $rootScope.getResults = function() {
+                var results = [];
+                var permutations = getArrayMutations($rootScope.words.split(","));    
+                permutations.forEach((mutation) => {
+                    results.push(JSON.stringify(mutation, ", "));
+                });
+                $rootScope.results = results;
             }                   
 
         });
