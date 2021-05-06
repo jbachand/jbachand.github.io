@@ -47,6 +47,7 @@
                 var results = [];
                 var permutations = getArrayMutations($rootScope.words.split(","));    
                 permutations.forEach((mutation) => {
+                    console.log(mutation);
                     results.push(JSON.stringify(mutation, ", "));
                 });
                 $rootScope.results = results;
