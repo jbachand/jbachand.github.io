@@ -17,9 +17,9 @@
                 
              <div ng-if="results">
                 <h3>Word List</h3>
-                <pre ng-repeat="result in results">
-                  <span>{{result}}</span><span ng-if="!$last">, </span>
-                 </pre>
+                <div>
+                  <span ng-repeat="result in results">{{result}}<br ng-if="!$last" /></span>
+                </div>
              </div>
         </div>
     </body>
