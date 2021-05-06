@@ -17,10 +17,9 @@
                 
              <div ng-if="results">
                 <h3>Word List</h3>
-                <div ng-repeat="camera in results">
-                  <strong>{{camera.name}}</strong><br />
-                  <img ng-src="{{camera.url}}/thumbnail/?live=0"/>
-                 </div>
+                <pre ng-repeat="result in results">
+                  <span>{{result}}</span><span ng-if="!$last">, </span>
+                 </pre>
              </div>
         </div>
     </body>
