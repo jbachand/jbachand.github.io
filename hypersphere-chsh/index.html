@@ -203,6 +203,57 @@
     border: 1px solid var(--border);
     border-radius: 6px;
   }
+  .d4-row {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 0.8rem;
+    align-items: start;
+    margin: 0.5rem 0;
+  }
+  @media (max-width: 700px) {
+    .d4-row { grid-template-columns: 1fr; }
+  }
+  .d4-panel {
+    background: #f5f7fa;
+    border-radius: 6px;
+    padding: 0.8rem 0.9rem;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+  .d4-panel .h { font-weight: bold; font-family: -apple-system, sans-serif; color: #333; }
+  .d4-panel .formula { color: #444; }
+  .d4-panel .highlight { color: #e07b00; font-weight: bold; }
+  .d4-panel .pos { color: #0a8a3a; }
+  .d4-panel .neg { color: #b02828; }
+  .d4-panel .target { color: #888; }
+  .d4-panel .S-eq { color: #0a4d8c; font-weight: bold; margin-top: 0.5rem; }
+  .d4-panel .S-val { color: #e07b00; font-weight: bold; font-size: 1.1em; }
+  .d4-panel hr { border: none; border-top: 1px solid #d0d4dc; margin: 0.5rem 0; }
+  .d4-panel .e-line { display: grid; grid-template-columns: 110px 1fr; }
+  .d4-3d-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+  }
+  @media (max-width: 700px) {
+    .d4-3d-row { grid-template-columns: 1fr; }
+  }
+  .d4-3d-cell { position: relative; }
+  .d4-3d-label {
+    position: absolute;
+    top: 8px; left: 12px;
+    font-family: -apple-system, sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #444;
+    background: rgba(245, 247, 250, 0.85);
+    padding: 2px 8px;
+    border-radius: 3px;
+    z-index: 2;
+    pointer-events: none;
+  }
   .viz-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -297,6 +348,31 @@
     <button id="btn1" onclick="toggleDemo1()">Start §3.1 (live, 1Hz)</button>
   </div>
   <canvas id="canvas1" class="viz-canvas" style="height: 240px;"></canvas>
+  <!-- 3D hypersphere with classical LHV sampling — particles stay inside cube -->
+  <div class="d4-3d-row" style="margin-top: 0.8rem;">
+    <div class="d4-3d-cell">
+      <div class="d4-3d-label">Alice view</div>
+      <canvas id="canvas1_3d_a" class="viz-canvas" style="height: 320px;"></canvas>
+    </div>
+    <div class="d4-3d-cell">
+      <div class="d4-3d-label">Bob view</div>
+      <canvas id="canvas1_3d_b" class="viz-canvas" style="height: 320px;"></canvas>
+    </div>
+  </div>
+  <div class="viz-legend">
+    <span><span class="swatch" style="background:#b02828;"></span> Classical Bell region (|S| ≤ 2)</span>
+    <span><span class="swatch" style="background:#1a8f5a; opacity:0.4;"></span> Tsirelson reach (|S| ≤ √8)</span>
+    <span><span class="swatch" style="background:#e07b00; border-radius:50%;"></span> Running |S| (LHV)</span>
+    <span><span class="swatch" style="background:#0a8a3a; border-radius:50%;"></span> Sample A·B = +1</span>
+    <span><span class="swatch" style="background:#b02828; border-radius:50%;"></span> Sample A·B = −1</span>
+  </div>
+  <div class="viz-caption">
+    Same hypersphere geometry as §3.3 and §3.4. Classical LHV samples
+    accumulate as colored particles. The orange head <strong>saturates
+    exactly at the red cube boundary (|S| = 2)</strong> — Bell's theorem
+    in 3D. Compare to §3.4 below, where Born-rule samples push the head
+    past the cube and out to the green sphere (|S| = √8).
+  </div>
   <div class="viz-legend">
     <span><span class="swatch" style="background:#2a7;"></span> A·B = +1</span>
     <span><span class="swatch" style="background:#c44;"></span> A·B = −1</span>
@@ -413,26 +489,57 @@
     overlap with the optimal CHSH axes.
   </p>
   <div class="demo-buttons">
-    <button onclick="runDemo4()">Run §3.4 (trace)</button>
     <button id="btn4" onclick="toggleDemo4Sampling()">Start sampling §3.4 (Born rule, 1Hz)</button>
   </div>
-  <canvas id="canvas4" class="viz-canvas" style="height: 320px;"></canvas>
+  <div class="d4-row">
+    <canvas id="canvas4" class="viz-canvas" style="height: 320px;"></canvas>
+    <div class="d4-panel">
+      <div class="h">Singlet correlation</div>
+      <div class="formula">E(a, b) = −cos(a − b)</div>
+      <div class="formula" style="margin-top: 0.4rem;">Each |aᵢ − bⱼ| = π/4</div>
+      <div class="highlight">→ |Eᵢⱼ| = cos(π/4) = 1/√2</div>
+      <div class="h" id="d4-header" style="margin-top: 0.6rem;">Closed-form values:</div>
+      <div class="e-line"><span id="d4-e11" class="neg">E₁₁ = −0.70711</span><span class="target" id="d4-t11">(target −1/√2)</span></div>
+      <div class="e-line"><span id="d4-e12" class="pos">E₁₂ = +0.70711</span><span class="target" id="d4-t12">(target +1/√2)</span></div>
+      <div class="e-line"><span id="d4-e21" class="neg">E₂₁ = −0.70711</span><span class="target" id="d4-t21">(target −1/√2)</span></div>
+      <div class="e-line"><span id="d4-e22" class="neg">E₂₂ = −0.70711</span><span class="target" id="d4-t22">(target −1/√2)</span></div>
+      <hr>
+      <div class="S-eq">S = E₁₁ − E₁₂ + E₂₁ + E₂₂</div>
+      <div class="S-val" id="d4-S">|S| = 2.82843</div>
+      <div class="target">target: √8 = 2.82843</div>
+    </div>
+  </div>
+  <!-- 3D hypersphere with sampling — two camera angles, shared scene -->
+  <div class="d4-3d-row">
+    <div class="d4-3d-cell">
+      <div class="d4-3d-label">Alice view</div>
+      <canvas id="canvas4_3d_a" class="viz-canvas" style="height: 320px;"></canvas>
+    </div>
+    <div class="d4-3d-cell">
+      <div class="d4-3d-label">Bob view</div>
+      <canvas id="canvas4_3d_b" class="viz-canvas" style="height: 320px;"></canvas>
+    </div>
+  </div>
   <div class="viz-legend">
-    <span><span class="swatch" style="background:#0a8a3a;"></span> Alice axes: 0, π/2</span>
-    <span><span class="swatch" style="background:#0a4d8c;"></span> Bob axes: π/4, 3π/4</span>
-    <span><span class="swatch" style="background:#e07b00;"></span> projection length 1/√2</span>
-    <span><span class="swatch" style="background:#1a8f5a;"></span> sampled A·B = +1 (correlated)</span>
-    <span><span class="swatch" style="background:#b02828;"></span> sampled A·B = −1 (anti)</span>
+    <span><span class="swatch" style="background:#b02828;"></span> Classical Bell region (|S| ≤ 2)</span>
+    <span><span class="swatch" style="background:#1a8f5a; opacity:0.4;"></span> Tsirelson reach (|S| ≤ √8)</span>
+    <span><span class="swatch" style="background:#e07b00; border-radius:50%;"></span> Running |S|</span>
+    <span><span class="swatch" style="background:#0a8a3a; border-radius:50%;"></span> Sample A·B = +1</span>
+    <span><span class="swatch" style="background:#b02828; border-radius:50%;"></span> Sample A·B = −1</span>
   </div>
   <div class="viz-caption">
-    Each |aᵢ − bⱼ| = π/4, so |Eᵢⱼ| = cos(π/4) = 1/√2. Four projections
-    reinforce in the CHSH sum to give |S| = 4/√2 = √8.
-    The √8 is the singlet's projection length onto the optimal axes —
-    computed from geometry, not assumed. Click "Start sampling" to watch
-    the Born rule build up each Eᵢⱼ from random measurement outcomes
-    converging to ±1/√2.
+    Same cube/sphere geometry as §3.3, two orthogonal camera angles.
+    Each Born-rule sample (200/sec) drops a colored particle inside the
+    hypersphere — green for A·B = +1, red for A·B = −1. Particles
+    accumulate near the running |S| position (orange ball), fading over
+    ~3 sec. Drag either view to rotate both. Watch the orange ball walk
+    from origin, cross the red cube (|S| = 2), and saturate at the
+    green sphere (|S| = √8).
   </div>
-  <div class="output" id="out4">Click Run.</div>
+  <div class="demo-buttons" style="margin-top: 0.6rem;">
+    <button onclick="runDemo4()">Run §3.4 (matrix trace)</button>
+  </div>
+  <div class="output" id="out4">Click "Run §3.4 (matrix trace)" for the closed-form 4×4 density-matrix trace across four state types: singlet, Bell triplet |Φ⁺⟩, separable product state |00⟩, maximally mixed I/4.</div>
   <div class="demo-buttons" style="margin-top: 0.6rem;">
     <button class="secondary" onclick="toggleSource(4)">Show source</button>
   </div>
@@ -1083,9 +1190,8 @@ function drawViz4() {
   ctx.fillStyle = '#f5f7fa';
   ctx.fillRect(0, 0, w, h);
 
-  // Right-side legend area
-  const legendW = 220;
-  const cx = (w - legendW) / 2, cy = h / 2, R = Math.min(w - legendW, h) / 2 - 30;
+  // Full-width geometric viz — algebra panel moved out to HTML
+  const cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 30;
 
   // Unit circle
   ctx.strokeStyle = '#9aa0aa';
@@ -1232,75 +1338,31 @@ function drawViz4() {
     ctx.textAlign = 'start';
   }
 
-  // ============================================================
-  // Right-side panel: the algebra
-  // ============================================================
-  const px = w - legendW + 10;
-  ctx.fillStyle = '#444';
-  ctx.font = 'bold 12px sans-serif';
-  ctx.fillText('Singlet correlation', px, 20);
-  ctx.font = '11px monospace';
-  ctx.fillText('E(a, b) = −cos(a − b)', px, 38);
+  // Update the HTML algebra panel (responsive — flows below canvas on mobile)
+  updateD4Panel();
+}
 
-  ctx.fillStyle = '#666';
-  ctx.fillText('Each |aᵢ − bⱼ| = π/4', px, 60);
-  ctx.fillStyle = '#e07b00';
-  ctx.font = 'bold 11px monospace';
-  ctx.fillText('→ |Eᵢⱼ| = cos(π/4) = 1/√2', px, 76);
-
-  // Four E_ij values — correct signs from E_ij = -cos(a_i - b_j)
-  ctx.font = '11px monospace';
-  ctx.fillStyle = '#444';
+function updateD4Panel() {
+  const expected = [-1/Math.sqrt(2), +1/Math.sqrt(2), -1/Math.sqrt(2), -1/Math.sqrt(2)];
   const sampling = demo4Sample.total > 0;
-  ctx.fillText(sampling ? `Sampled values (N = ${demo4Sample.total}):` : 'Closed-form values:', px, 102);
-
-  // Compute current displayed E values (either exact or sampled means)
-  const expected = [
-    ['E₁₁', -1/Math.sqrt(2)],
-    ['E₁₂', +1/Math.sqrt(2)],
-    ['E₂₁', -1/Math.sqrt(2)],
-    ['E₂₂', -1/Math.sqrt(2)]
-  ];
-  const sampled = sampling ? [
-    ['E₁₁', demo4Sample.sumProd[0] / demo4Sample.perPair],
-    ['E₁₂', demo4Sample.sumProd[1] / demo4Sample.perPair],
-    ['E₂₁', demo4Sample.sumProd[2] / demo4Sample.perPair],
-    ['E₂₂', demo4Sample.sumProd[3] / demo4Sample.perPair]
-  ] : null;
-  const display = sampled || expected;
-
-  let yy = 120;
+  const values = sampling
+    ? demo4Sample.sumProd.map(s => s / demo4Sample.perPair)
+    : expected;
+  const ids = ['d4-e11', 'd4-e12', 'd4-e21', 'd4-e22'];
+  const names = ['E₁₁', 'E₁₂', 'E₂₁', 'E₂₂'];
+  document.getElementById('d4-header').textContent =
+    sampling
+      ? `Sampled values (N = ${demo4Sample.total.toLocaleString()}):`
+      : 'Closed-form values:';
   for (let i = 0; i < 4; i++) {
-    const [name, val] = display[i];
-    const sign = val >= 0 ? '+' : '−';
-    ctx.fillStyle = val > 0 ? '#0a8a3a' : '#b02828';
-    ctx.fillText(`${name} = ${sign}${Math.abs(val).toFixed(4)}`, px, yy);
-    if (sampling) {
-      // Target sign + small residual in a second fixed column
-      const target = expected[i][1];
-      const tsign = target >= 0 ? '+' : '−';
-      const dev = val - target;
-      ctx.fillStyle = '#888';
-      ctx.fillText(`(target ${tsign}1/√2)`, px + 105, yy);
-    }
-    yy += 14;
+    const v = values[i];
+    const el = document.getElementById(ids[i]);
+    const sign = v >= 0 ? '+' : '−';
+    el.textContent = `${names[i]} = ${sign}${Math.abs(v).toFixed(5)}`;
+    el.className = v > 0 ? 'pos' : 'neg';
   }
-
-  // CHSH sum
-  ctx.strokeStyle = '#d0d4dc';
-  ctx.beginPath();
-  ctx.moveTo(px, yy + 4); ctx.lineTo(px + 180, yy + 4); ctx.stroke();
-  ctx.fillStyle = '#0a4d8c';
-  ctx.font = 'bold 12px monospace';
-  ctx.fillText('S = E₁₁ − E₁₂ + E₂₁ + E₂₂', px, yy + 22);
-  // Compute |S| from current displayed values
-  const Sval = Math.abs(display[0][1] - display[1][1] + display[2][1] + display[3][1]);
-  ctx.fillStyle = '#e07b00';
-  ctx.font = 'bold 14px monospace';
-  ctx.fillText(`|S| = ${Sval.toFixed(5)}`, px, yy + 42);
-  ctx.fillStyle = '#666';
-  ctx.font = '10px monospace';
-  ctx.fillText(`target: √8 = ${Math.sqrt(8).toFixed(5)}`, px, yy + 58);
+  const S = Math.abs(values[0] - values[1] + values[2] + values[3]);
+  document.getElementById('d4-S').textContent = `|S| = ${S.toFixed(5)}`;
 }
 
 // =============================================================
@@ -1310,19 +1372,45 @@ let demo1Interval = null;
 function runDemo1Once() {
   const N_VIZ = 800;
   const samples = [];
-  const a1 = 0, b1 = Math.PI/4;
+  const a1 = 0, a2 = Math.PI/2, b1 = Math.PI/4, b2 = 3*Math.PI/4;
+  // Accumulate all four E_ij in one sweep over the random-phase model
+  let sumE11 = 0, sumE12 = 0, sumE21 = 0, sumE22 = 0;
+  const particleProducts = [];
   for (let i = 0; i < N_VIZ; i++) {
     const phase = Math.random() * 2 * Math.PI;
-    const A = Math.cos(phase + a1) > 0 ? 1 : -1;
-    const B = Math.cos(phase + b1) > 0 ? 1 : -1;
-    samples.push({ phase, product: A * B });
+    const A1 = Math.cos(phase + a1) > 0 ? 1 : -1;
+    const A2 = Math.cos(phase + a2) > 0 ? 1 : -1;
+    const B1 = Math.cos(phase + b1) > 0 ? 1 : -1;
+    const B2 = Math.cos(phase + b2) > 0 ? 1 : -1;
+    sumE11 += A1 * B1;
+    sumE12 += A1 * B2;
+    sumE21 += A2 * B1;
+    sumE22 += A2 * B2;
+    samples.push({ phase, product: A1 * B1 });
+    // Subsample for the 3D particle injection (≈200 per tick total)
+    if (i < 50) {
+      particleProducts.push(A1 * B1);
+      particleProducts.push(A1 * B2);
+      particleProducts.push(A2 * B1);
+      particleProducts.push(A2 * B2);
+    }
   }
   drawViz1(samples);
-  runDemo1();  // textual stats (the original 5000-trial CHSH calc)
+  runDemo1();  // textual stats (separate 5000-trial CHSH calc)
+  // Drive the 3D hypersphere viz with the running |S|
+  if (viz1_3D) {
+    const E11 = sumE11 / N_VIZ;
+    const E12 = sumE12 / N_VIZ;
+    const E21 = sumE21 / N_VIZ;
+    const E22 = sumE22 / N_VIZ;
+    const S = Math.abs(E11 - E12 + E21 + E22);
+    viz1_3D.update(S, particleProducts);
+  }
 }
 function toggleDemo1() {
   const btn = document.getElementById('btn1');
   if (demo1Interval === null) {
+    if (viz1_3D) viz1_3D.clearTrail();
     runDemo1Once();
     demo1Interval = setInterval(runDemo1Once, 1000);
     btn.textContent = 'Stop §3.1';
@@ -1332,6 +1420,7 @@ function toggleDemo1() {
     demo1Interval = null;
     btn.textContent = 'Start §3.1 (live, 1Hz)';
     btn.classList.remove('running');
+    if (viz1_3D) viz1_3D.reset();
   }
 }
 
@@ -1418,7 +1507,9 @@ function sampleSinglet(a, b) {
 }
 function tickDemo4Sampling() {
   const N_PER_PAIR = 500;
-  const N_VIZ_PER_PAIR = 70;  // subsample for visualization scatter
+  const N_VIZ_PER_PAIR = 70;  // subsample for 2D circle scatter
+  const N_3D_PARTICLES_PER_PAIR = 50;  // subsample for 3D particle injection
+  const particleProducts = [];
   for (let k = 0; k < 4; k++) {
     const [a, b] = D4_PAIRS[k];
     let acc = demo4Sample.sumProd[k];
@@ -1426,42 +1517,35 @@ function tickDemo4Sampling() {
       const [A, B] = sampleSinglet(a, b);
       const prod = A * B;
       acc += prod;
-      // Add subsample to visualization scatter
+      // Subsample for 2D circle scatter
       if (i < N_VIZ_PER_PAIR) {
         demo4Dots.push({
           pairIdx: k,
           product: prod,
-          // Random position within angular wedge + radial range
           ang: D4_ZONES[k] + (Math.random() - 0.5) * Math.PI/6,
           rad: 0.22 + Math.random() * 0.62
         });
       }
+      // Subsample for 3D particle injection
+      if (i < N_3D_PARTICLES_PER_PAIR) {
+        particleProducts.push(prod);
+      }
     }
     demo4Sample.sumProd[k] = acc;
   }
-  // Keep the most recent MAX_DOTS samples (sliding window for visual)
+  // Keep the most recent MAX_DOTS samples for the 2D scatter
   if (demo4Dots.length > MAX_DOTS) {
     demo4Dots = demo4Dots.slice(demo4Dots.length - MAX_DOTS);
   }
   demo4Sample.perPair += N_PER_PAIR;
   demo4Sample.total = 4 * demo4Sample.perPair;
   drawViz4();
-  // Update text output with running stats
-  const E = demo4Sample.sumProd.map(s => s / demo4Sample.perPair);
-  const S = Math.abs(E[0] - E[1] + E[2] + E[3]);
-  document.getElementById('out4').textContent =
-    `Born-rule sampling of |Ψ⁻⟩ at the four CHSH axis pairs.\n` +
-    `Trials per pair: ${demo4Sample.perPair.toLocaleString()}   total: ${demo4Sample.total.toLocaleString()}\n\n` +
-    `  E₁₁ = ${E[0].toFixed(6)}    target −1/√2 = ${(-1/Math.sqrt(2)).toFixed(6)}\n` +
-    `  E₁₂ = ${E[1].toFixed(6)}    target +1/√2 = ${(+1/Math.sqrt(2)).toFixed(6)}\n` +
-    `  E₂₁ = ${E[2].toFixed(6)}    target −1/√2 = ${(-1/Math.sqrt(2)).toFixed(6)}\n` +
-    `  E₂₂ = ${E[3].toFixed(6)}    target −1/√2 = ${(-1/Math.sqrt(2)).toFixed(6)}\n\n` +
-    `  |S| = |E₁₁ − E₁₂ + E₂₁ + E₂₂| = ${S.toFixed(6)}\n` +
-    `  target: √8 = ${Math.sqrt(8).toFixed(6)}\n` +
-    `  residual: ${Math.abs(S - Math.sqrt(8)).toExponential(2)}\n\n` +
-    `The √8 is being CONSTRUCTED from random ±1 outcomes governed by the\n` +
-    `singlet's Born-rule probabilities sin²((a−b)/2). No assumption of the\n` +
-    `bound — it emerges from sampling the hypersphere geometry.`;
+  // Drive the 3D hypersphere viz: running |S| + per-tick particle batch
+  if (viz4_3D) {
+    const E = demo4Sample.sumProd.map(s => s / demo4Sample.perPair);
+    const S = Math.abs(E[0] - E[1] + E[2] + E[3]);
+    viz4_3D.update(S, particleProducts);
+  }
 }
 function toggleDemo4Sampling() {
   const btn = document.getElementById('btn4');
@@ -1469,6 +1553,7 @@ function toggleDemo4Sampling() {
     // Reset on start
     demo4Sample = { total: 0, perPair: 0, sumProd: [0, 0, 0, 0] };
     demo4Dots = [];
+    if (viz4_3D) viz4_3D.clearTrail();
     tickDemo4Sampling();
     demo4Interval = setInterval(tickDemo4Sampling, 1000);
     btn.textContent = 'Stop sampling §3.4';
@@ -1482,7 +1567,261 @@ function toggleDemo4Sampling() {
     demo4Sample = { total: 0, perPair: 0, sumProd: [0, 0, 0, 0] };
     demo4Dots = [];
     drawViz4();
+    if (viz4_3D) viz4_3D.reset();
   }
+}
+
+// =============================================================
+//  3D hypersphere view — dual cameras + particle sampling
+//  Used by §3.1 (classical LHV) and §3.4 (quantum singlet)
+// =============================================================
+let viz1_3D = null;
+let viz4_3D = null;
+function initHypersphere(canvasIdA, canvasIdB) {
+  if (typeof THREE === 'undefined') return null;
+  const canvasA = document.getElementById(canvasIdA);
+  const canvasB = document.getElementById(canvasIdB);
+  if (!canvasA || !canvasB) return null;
+
+  // Shared scene
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf5f7fa);
+
+  // Two cameras, two renderers — same scene, different viewpoints
+  function mkRenderer(canvas) {
+    const r = new THREE.WebGLRenderer({ canvas, antialias: true });
+    r.setPixelRatio(window.devicePixelRatio);
+    r.setClearColor(0xf5f7fa);
+    return r;
+  }
+  function mkCamera(canvas, pos) {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    const cam = new THREE.PerspectiveCamera(40, w/h, 0.1, 100);
+    cam.position.set(pos[0], pos[1], pos[2]);
+    cam.lookAt(0, 0, 0);
+    return cam;
+  }
+  const rendA = mkRenderer(canvasA);
+  const rendB = mkRenderer(canvasB);
+  rendA.setSize(canvasA.clientWidth, canvasA.clientHeight, false);
+  rendB.setSize(canvasB.clientWidth, canvasB.clientHeight, false);
+  // Alice view: from the +x side, slight elevation
+  const camA = mkCamera(canvasA, [2.6, 1.4, 1.4]);
+  // Bob view: from the +z side, opposite quadrant — sees scene from different face
+  const camB = mkCamera(canvasB, [-1.4, 1.4, 2.6]);
+
+  // Tsirelson sphere + sparse great circles
+  const sphereGeom = new THREE.SphereGeometry(1, 48, 32);
+  scene.add(new THREE.Mesh(sphereGeom,
+    new THREE.MeshBasicMaterial({ color: 0xd6f3e0, transparent: true, opacity: 0.18, depthWrite: false })));
+  function addCirc(axis, color, opacity, segs) {
+    const pts = [];
+    for (let i = 0; i <= segs; i++) {
+      const a = (i / segs) * 2 * Math.PI;
+      const c = Math.cos(a), s = Math.sin(a);
+      if (axis === 'z') pts.push(new THREE.Vector3(c, s, 0));
+      else if (axis === 'y') pts.push(new THREE.Vector3(c, 0, s));
+      else pts.push(new THREE.Vector3(0, c, s));
+    }
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color, transparent: true, opacity })));
+  }
+  addCirc('x', 0x0d6b3f, 0.7, 96);
+  addCirc('y', 0x0d6b3f, 0.7, 96);
+  addCirc('z', 0x0d6b3f, 0.7, 96);
+  function addLat(height, color, opacity, segs) {
+    const r = Math.sqrt(Math.max(0, 1 - height*height));
+    const pts = [];
+    for (let i = 0; i <= segs; i++) {
+      const a = (i / segs) * 2 * Math.PI;
+      pts.push(new THREE.Vector3(r * Math.cos(a), height, r * Math.sin(a)));
+    }
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color, transparent: true, opacity })));
+  }
+  for (const hy of [-0.85, -0.5, 0.5, 0.85]) addLat(hy, 0x0d6b3f, 0.35, 64);
+
+  // Classical Bell cube
+  const half = 1 / Math.sqrt(6);
+  const cubeGeom = new THREE.BoxGeometry(2*half, 2*half, 2*half);
+  scene.add(new THREE.Mesh(cubeGeom,
+    new THREE.MeshBasicMaterial({ color: 0xffdada, transparent: true, opacity: 0.4, depthWrite: false })));
+  scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(cubeGeom),
+    new THREE.LineBasicMaterial({ color: 0xa01818 })));
+
+  // Running head — current |S|
+  const head = new THREE.Mesh(
+    new THREE.SphereGeometry(0.075, 18, 12),
+    new THREE.MeshBasicMaterial({ color: 0xe07b00 })
+  );
+  scene.add(head);
+
+  // Particle system — each sample is one particle with lifetime
+  const MAX_PARTICLES = 1500;
+  const partPos = new Float32Array(MAX_PARTICLES * 3);
+  const partCol = new Float32Array(MAX_PARTICLES * 3);
+  const partLife = new Float32Array(MAX_PARTICLES);    // alpha-ish lifetime [0..1], 0 = dead
+  const partGeom = new THREE.BufferGeometry();
+  partGeom.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+  partGeom.setAttribute('color', new THREE.BufferAttribute(partCol, 3));
+  const partMat = new THREE.PointsMaterial({
+    size: 0.04,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.85,
+    depthWrite: false,
+    sizeAttenuation: true,
+  });
+  const partSystem = new THREE.Points(partGeom, partMat);
+  scene.add(partSystem);
+  let partWritePtr = 0, partAlive = 0;
+
+  function spawnParticle(x, y, z, product) {
+    const i = partWritePtr;
+    partPos[i*3]     = x;
+    partPos[i*3 + 1] = y;
+    partPos[i*3 + 2] = z;
+    if (product > 0) {
+      // green: A·B = +1
+      partCol[i*3]     = 0x0a/255;
+      partCol[i*3 + 1] = 0x8a/255;
+      partCol[i*3 + 2] = 0x3a/255;
+    } else {
+      // red: A·B = −1
+      partCol[i*3]     = 0xb0/255;
+      partCol[i*3 + 1] = 0x28/255;
+      partCol[i*3 + 2] = 0x28/255;
+    }
+    partLife[i] = 1.0;
+    partWritePtr = (partWritePtr + 1) % MAX_PARTICLES;
+    partAlive = Math.min(partAlive + 1, MAX_PARTICLES);
+    partGeom.setDrawRange(0, partAlive);
+    partGeom.attributes.position.needsUpdate = true;
+    partGeom.attributes.color.needsUpdate = true;
+  }
+
+  // Per-frame: fade particles by lifetime; drop alpha by darkening color
+  let lastT = performance.now();
+  function decayParticles(dt) {
+    const decay = dt / 3000;  // 3-second fade
+    for (let i = 0; i < MAX_PARTICLES; i++) {
+      if (partLife[i] <= 0) continue;
+      partLife[i] -= decay;
+      if (partLife[i] <= 0) {
+        partLife[i] = 0;
+        // Move dead particle far away so it doesn't render
+        partPos[i*3] = 1000; partPos[i*3 + 1] = 1000; partPos[i*3 + 2] = 1000;
+      }
+    }
+    partGeom.attributes.position.needsUpdate = true;
+  }
+
+  // Shared rotation state across both views (drag any → rotates scene)
+  let isDragging = false, lastX = 0, lastY = 0;
+  let rotX = 0.2, rotY = 0;
+  let autoRotY = 0;
+  function bindDrag(canvas) {
+    canvas.addEventListener('mousedown', e => {
+      isDragging = true; lastX = e.clientX; lastY = e.clientY;
+    });
+    canvas.addEventListener('touchstart', e => {
+      isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+    }, { passive: true });
+  }
+  bindDrag(canvasA);
+  bindDrag(canvasB);
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('touchend', () => { isDragging = false; });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    rotY += (e.clientX - lastX) * 0.01;
+    rotX += (e.clientY - lastY) * 0.01;
+    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+    lastX = e.clientX; lastY = e.clientY;
+  });
+  window.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    rotY += (e.touches[0].clientX - lastX) * 0.01;
+    rotX += (e.touches[0].clientY - lastY) * 0.01;
+    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+    lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+  }, { passive: true });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const now = performance.now();
+    const dt = now - lastT;
+    lastT = now;
+    if (!isDragging) autoRotY += 0.0025;
+    scene.rotation.x = rotX;
+    scene.rotation.y = rotY + autoRotY;
+    decayParticles(dt);
+    rendA.render(scene, camA);
+    rendB.render(scene, camB);
+  }
+  animate();
+
+  // Currently running |S| position cache, used for spawn locations
+  let currentS = 0;
+
+  const api = {
+    update(S, batchSamples) {
+      currentS = S;
+      // Move head: distance |S|/√8 along (1,1,1)/√3
+      const r = S / Math.sqrt(8);
+      const d = 1 / Math.sqrt(3);
+      const hx = r * d, hy = r * d, hz = r * d;
+      head.position.set(hx, hy, hz);
+      const inside = (S <= 2.0001);
+      head.material.color.setHex(inside ? 0xe07b00 : 0x1a8f5a);
+      // Spawn particles for this batch — each sample's A·B becomes one
+      // colored particle scattered near the running head with random jitter
+      // confined inside the sphere.
+      if (batchSamples && batchSamples.length) {
+        for (const prod of batchSamples) {
+          // Random offset within a ball of radius proportional to |S|
+          const offsetR = 0.15 + Math.random() * 0.55;
+          const theta = Math.random() * 2 * Math.PI;
+          const phi = Math.acos(2 * Math.random() - 1);
+          const sinPhi = Math.sin(phi);
+          const ox = offsetR * sinPhi * Math.cos(theta);
+          const oy = offsetR * sinPhi * Math.sin(theta);
+          const oz = offsetR * Math.cos(phi);
+          // Place near head but biased toward inside of sphere
+          let px = hx + ox * 0.5;
+          let py = hy + oy * 0.5;
+          let pz = hz + oz * 0.5;
+          // Clamp inside sphere (radius 1)
+          const mag = Math.sqrt(px*px + py*py + pz*pz);
+          if (mag > 0.97) {
+            const s = 0.97 / mag;
+            px *= s; py *= s; pz *= s;
+          }
+          spawnParticle(px, py, pz, prod);
+        }
+      }
+    },
+    reset() {
+      head.position.set(0, 0, 0);
+      head.material.color.setHex(0xe07b00);
+      partWritePtr = 0; partAlive = 0;
+      for (let i = 0; i < MAX_PARTICLES; i++) {
+        partLife[i] = 0;
+        partPos[i*3] = 1000; partPos[i*3 + 1] = 1000; partPos[i*3 + 2] = 1000;
+      }
+      partGeom.setDrawRange(0, 0);
+    },
+    clearTrail() {
+      partWritePtr = 0; partAlive = 0;
+      for (let i = 0; i < MAX_PARTICLES; i++) {
+        partLife[i] = 0;
+        partPos[i*3] = 1000; partPos[i*3 + 1] = 1000; partPos[i*3 + 2] = 1000;
+      }
+      partGeom.setDrawRange(0, 0);
+    }
+  };
+  api.reset();
+  return api;
 }
 
 function drawViz2() {
@@ -1576,6 +1915,8 @@ function drawViz2() {
 window.addEventListener('load', () => {
   initViz3();
   updateViz3(0);
+  viz1_3D = initHypersphere('canvas1_3d_a', 'canvas1_3d_b');
+  viz4_3D = initHypersphere('canvas4_3d_a', 'canvas4_3d_b');
   // Draw demo 4 viz on load to show the structure
   drawViz4();
   // Draw demo 2 viz (empty initial state — shows tracks ready)
