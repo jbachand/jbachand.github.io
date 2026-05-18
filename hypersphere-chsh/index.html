@@ -86,6 +86,10 @@
     font-family: inherit;
   }
   button:hover { background: #073860; }
+  button.running {
+    background: var(--classical);
+  }
+  button.running:hover { background: #8a1010; }
   button.secondary {
     background: white;
     color: var(--accent);
@@ -210,7 +214,7 @@
     .viz-row { grid-template-columns: 1fr; }
   }
   .viz-canvas {
-    background: #0e0e14;
+    background: #f5f7fa;
     border-radius: 6px;
     width: 100%;
     height: 300px;
@@ -249,7 +253,7 @@
 
 <p>
   Four self-contained demonstrations of the full CHSH spectrum from $|S|=0$
-  to $|S|=2\sqrt{2}$. Each runs in your browser in milliseconds. No
+  to $|S|=\sqrt{8}$. Each runs in your browser in milliseconds. No
   installation, no dependencies — pure JavaScript reproducing the same
   arithmetic as the
   <a href="https://github.com/jbachand/hypersphere-chsh">Python scripts on
@@ -273,13 +277,10 @@
   </div>
   <div class="bound quantum">
     Tsirelson bound
-    <span class="value">|S| ≤ 2√2</span>
+    <span class="value">|S| ≤ √8</span>
     p = 1 (pure singlet)
   </div>
 </div>
-
-<button class="runall" onclick="runAll()">Run all four demos</button>
-<span id="runall-status" style="margin-left: 0.6rem; color: var(--muted); font-size: 0.9rem;"></span>
 
 <!-- ============================================================ -->
 <!-- DEMO 1: Shared-state classical counter                       -->
@@ -293,8 +294,7 @@
     system reaching the Bell bound by Bell-saturation.
   </p>
   <div class="demo-buttons">
-    <button onclick="runDemo1()">Run §3.1</button>
-    <button class="secondary" onclick="toggleSource(1)">Show source</button>
+    <button id="btn1" onclick="toggleDemo1()">Start §3.1 (live, 1Hz)</button>
   </div>
   <canvas id="canvas1" class="viz-canvas" style="height: 240px;"></canvas>
   <div class="viz-legend">
@@ -308,6 +308,9 @@
     is the imbalance of green vs red.
   </div>
   <div class="output" id="out1">Click Run.</div>
+  <div class="demo-buttons" style="margin-top: 0.6rem;">
+    <button class="secondary" onclick="toggleSource(1)">Show source</button>
+  </div>
   <pre class="source" id="source1" style="display:none;"></pre>
 </div>
 
@@ -323,10 +326,23 @@
     — perfect classical saturation with zero noise.
   </p>
   <div class="demo-buttons">
-    <button onclick="runDemo2()">Run §3.2</button>
+    <button id="btn2" onclick="toggleDemo2()">Start §3.2 (animated zipper)</button>
+  </div>
+  <canvas id="canvas2" class="viz-canvas" style="height: 220px;"></canvas>
+  <div class="viz-legend">
+    <span><span class="swatch" style="background:#0a8a3a;"></span> A active (fast on odd N)</span>
+    <span><span class="swatch" style="background:#0a4d8c;"></span> B active (fast on even N)</span>
+    <span><span class="swatch" style="background:#d0d4dc;"></span> waiting (slow side)</span>
+  </div>
+  <div class="viz-caption">
+    Joint counter N advances only when the fast side ticks. Each function
+    skips its slow turns. Despite the cooperative speedup, CHSH still hits
+    exactly |S| = 2.0000 — engineering can't cross Bell's bound.
+  </div>
+  <div class="output" id="out2">Click Start.</div>
+  <div class="demo-buttons" style="margin-top: 0.6rem;">
     <button class="secondary" onclick="toggleSource(2)">Show source</button>
   </div>
-  <div class="output" id="out2">Click Run.</div>
   <pre class="source" id="source2" style="display:none;"></pre>
 </div>
 
@@ -339,7 +355,7 @@
     Construct the Werner state ρ_W(p) = p·|Ψ⁻⟩⟨Ψ⁻| + (1−p)·I/4, compute
     |S| via the Born-rule trace formula. As γ slides from 0 to 1, p slides
     from 1/√2 to 1, and |S| marches linearly from the Bell bound 2 to the
-    Tsirelson bound 2√2. <strong>Drag the slider to see it live.</strong>
+    Tsirelson bound √8. <strong>Drag the slider to see it live.</strong>
   </p>
   <div class="gamma-controls">
     <label>γ knob (Werner mixing parameter):</label>
@@ -369,18 +385,17 @@
   <canvas id="canvas3" class="viz-canvas"></canvas>
   <div class="viz-legend">
     <span><span class="swatch" style="background:#c44; border-radius:50%;"></span> Classical Bell region (|S| ≤ 2)</span>
-    <span><span class="swatch" style="background:#2a7; opacity:0.4;"></span> Tsirelson reach (|S| ≤ 2√2)</span>
+    <span><span class="swatch" style="background:#2a7; opacity:0.4;"></span> Tsirelson reach (|S| ≤ √8)</span>
     <span><span class="swatch" style="background:#ffaa00; border-radius:50%;"></span> Current |S|</span>
   </div>
   <div class="viz-caption">
-    The yellow point's distance from origin = |S|/2√2. As γ → 1, it slides
+    The yellow point's distance from origin = |S|/√8. As γ → 1, it slides
     from the classical Bell ceiling (red wireframe cube, |S|=2) outward to
-    the Tsirelson sphere (green wireframe, |S|=2√2). The √2 gap is the
+    the Tsirelson sphere (green wireframe, |S|=√8). The √8/2 = √2 gap is the
     geometric "reach" no LHV system can cross. Drag-rotate to inspect.
   </div>
-  <div class="output" id="out3" style="display:none;"></div>
-  <div class="demo-buttons" style="margin-top: 0.5rem;">
-    <button class="secondary" onclick="toggleDemo3Detail()">Show full trace</button>
+  <div class="output" id="out3"></div>
+  <div class="demo-buttons" style="margin-top: 0.6rem;">
     <button class="secondary" onclick="toggleSource(3)">Show source</button>
   </div>
   <pre class="source" id="source3" style="display:none;"></pre>
@@ -398,22 +413,29 @@
     overlap with the optimal CHSH axes.
   </p>
   <div class="demo-buttons">
-    <button onclick="runDemo4()">Run §3.4</button>
-    <button class="secondary" onclick="toggleSource(4)">Show source</button>
+    <button onclick="runDemo4()">Run §3.4 (trace)</button>
+    <button id="btn4" onclick="toggleDemo4Sampling()">Start sampling §3.4 (Born rule, 1Hz)</button>
   </div>
-  <canvas id="canvas4" class="viz-canvas" style="height: 280px;"></canvas>
+  <canvas id="canvas4" class="viz-canvas" style="height: 320px;"></canvas>
   <div class="viz-legend">
-    <span><span class="swatch" style="background:#2a7;"></span> Alice axes: 0, π/2</span>
+    <span><span class="swatch" style="background:#0a8a3a;"></span> Alice axes: 0, π/2</span>
     <span><span class="swatch" style="background:#0a4d8c;"></span> Bob axes: π/4, 3π/4</span>
-    <span><span class="swatch" style="background:#ffaa00;"></span> singlet correlation E(a,b) = −cos(a−b)</span>
+    <span><span class="swatch" style="background:#e07b00;"></span> projection length 1/√2</span>
+    <span><span class="swatch" style="background:#1a8f5a;"></span> sampled A·B = +1 (correlated)</span>
+    <span><span class="swatch" style="background:#b02828;"></span> sampled A·B = −1 (anti)</span>
   </div>
   <div class="viz-caption">
-    Unit-circle projection of measurement axes. The four E_ij values
-    evaluate to ±cos(45°) = ±1/√2, reinforcing to |S| = 4/√2 = 2√2.
-    The √2 is the projection length of |Ψ⁻⟩ onto these axes — computed,
-    not assumed.
+    Each |aᵢ − bⱼ| = π/4, so |Eᵢⱼ| = cos(π/4) = 1/√2. Four projections
+    reinforce in the CHSH sum to give |S| = 4/√2 = √8.
+    The √8 is the singlet's projection length onto the optimal axes —
+    computed from geometry, not assumed. Click "Start sampling" to watch
+    the Born rule build up each Eᵢⱼ from random measurement outcomes
+    converging to ±1/√2.
   </div>
   <div class="output" id="out4">Click Run.</div>
+  <div class="demo-buttons" style="margin-top: 0.6rem;">
+    <button class="secondary" onclick="toggleSource(4)">Show source</button>
+  </div>
   <pre class="source" id="source4" style="display:none;"></pre>
 </div>
 
@@ -590,11 +612,10 @@ function updateGamma(rawVal) {
   document.getElementById('werner-p').textContent = p.toFixed(4);
   document.getElementById('S-val').textContent = S.toFixed(4);
   document.getElementById('gauge-marker').style.left = (g * 100) + '%';
-  // Update detailed output if visible
-  const out3 = document.getElementById('out3');
-  if (out3.style.display !== 'none') {
-    out3.textContent = formatDemo3Detail(g, p, S);
-  }
+  // Always-expanded detail output
+  document.getElementById('out3').textContent = formatDemo3Detail(g, p, S);
+  // Update the 3D scene
+  updateViz3(g);
 }
 
 function formatDemo3Detail(g, p, S) {
@@ -613,15 +634,6 @@ Tsirelson bound (γ=1):         |S| = ${(2 * Math.sqrt(2)).toFixed(8)}
 Both endpoints agree with the master equation to machine precision.`;
 }
 
-function toggleDemo3Detail() {
-  const out3 = document.getElementById('out3');
-  if (out3.style.display === 'none') {
-    out3.style.display = 'block';
-    updateGamma(document.getElementById('gamma-slider').value);
-  } else {
-    out3.style.display = 'none';
-  }
-}
 
 // =============================================================
 //  Demo 4: From-scratch hypersphere
@@ -633,7 +645,7 @@ function runDemo4() {
   const sdens = singletDensity();
   const S_sing = Math.abs(matTrace(matMul(sdens, op)));
   lines.push(`Singlet |Ψ⁻⟩ = (|01⟩ − |10⟩)/√2`);
-  lines.push(`  |S| = ${S_sing.toFixed(8)}     ← Tsirelson 2√2 = ${(2*Math.sqrt(2)).toFixed(8)}`);
+  lines.push(`  |S| = ${S_sing.toFixed(8)}     ← Tsirelson √8 = ${Math.sqrt(8).toFixed(8)}`);
   lines.push(``);
   // |Φ+⟩ = (|00⟩ + |11⟩)/√2 — another Bell vertex
   const inv = 1/Math.sqrt(2);
@@ -641,7 +653,7 @@ function runDemo4() {
   const phi_dens = outer(phi_plus, phi_plus);
   const S_phi = Math.abs(matTrace(matMul(phi_dens, op)));
   lines.push(`Bell triplet |Φ⁺⟩ = (|00⟩ + |11⟩)/√2`);
-  lines.push(`  |S| = ${S_phi.toFixed(8)}     ← Same Tsirelson value, different vertex`);
+  lines.push(`  |S| = ${S_phi.toFixed(8)}     ← Same √8 value, different Bell vertex`);
   lines.push(``);
   // Product state |00⟩
   const prod = [[1,0], [0,0], [0,0], [0,0]];
@@ -656,11 +668,13 @@ function runDemo4() {
   lines.push(`Maximally mixed I/4  (no correlation at all)`);
   lines.push(`  |S| = ${S_mix.toFixed(8)}     ← Zero correlation`);
   lines.push(``);
-  lines.push(`Each E_ij at the optimal axes evaluates to ±1/√2 = ±${(1/Math.sqrt(2)).toFixed(8)}.`);
-  lines.push(`Four E values combining with reinforcing signs give |S| = 4/√2 = ${(4/Math.sqrt(2)).toFixed(8)}.`);
+  lines.push(`Each Eᵢⱼ at the optimal axes evaluates to ±1/√2 = ±${(1/Math.sqrt(2)).toFixed(8)}.`);
+  lines.push(`Four E values combining with reinforcing signs give |S| = 4/√2 = √8 = ${Math.sqrt(8).toFixed(8)}.`);
   lines.push(`The √8 factor is NOT imported — it is computed from the singlet's`);
   lines.push(`geometric projection onto the optimal CHSH axes in 4D correlation space.`);
   document.getElementById('out4').textContent = lines.join('\n');
+  // Redraw the geometric viz (axes, projection dots, algebra panel)
+  drawViz4();
 }
 
 // =============================================================
@@ -844,7 +858,7 @@ function initViz3() {
   if (typeof THREE === 'undefined') return;
   const canvas = document.getElementById('canvas3');
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0e0e14);
+  scene.background = new THREE.Color(0xf5f7fa);
   const w = canvas.clientWidth, h = canvas.clientHeight;
   const camera = new THREE.PerspectiveCamera(40, w/h, 0.1, 100);
   camera.position.set(2.6, 1.8, 2.6);
@@ -853,31 +867,70 @@ function initViz3() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(w, h, false);
 
-  // Tsirelson sphere (radius 1, |S| = 2√2)
-  const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 32, 24),
-    new THREE.MeshBasicMaterial({ color: 0x2a7, wireframe: true, transparent: true, opacity: 0.25 })
+  // Tsirelson sphere (radius 1, |S| = 2√2) — clean great-circle latitude/longitude
+  // Sphere fill (subtle, gives depth without busyness)
+  const sphereGeom = new THREE.SphereGeometry(1, 48, 32);
+  const sphereMesh = new THREE.Mesh(
+    sphereGeom,
+    new THREE.MeshBasicMaterial({ color: 0xd6f3e0, transparent: true, opacity: 0.22, depthWrite: false })
   );
-  scene.add(sphere);
+  scene.add(sphereMesh);
+  // Build SPARSE great circles instead of dense wireframe — much cleaner
+  function addCircle(scene, axis, color, opacity, segments) {
+    const pts = [];
+    for (let i = 0; i <= segments; i++) {
+      const a = (i / segments) * 2 * Math.PI;
+      const c = Math.cos(a), s = Math.sin(a);
+      // Circle in plane perpendicular to `axis`
+      if (axis === 'z') pts.push(new THREE.Vector3(c, s, 0));
+      else if (axis === 'y') pts.push(new THREE.Vector3(c, 0, s));
+      else pts.push(new THREE.Vector3(0, c, s));
+    }
+    const geom = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+    scene.add(new THREE.Line(geom, mat));
+  }
+  // Three principal great circles (equators on x, y, z axes)
+  addCircle(scene, 'x', 0x0d6b3f, 0.7, 96);
+  addCircle(scene, 'y', 0x0d6b3f, 0.7, 96);
+  addCircle(scene, 'z', 0x0d6b3f, 0.7, 96);
+  // A few latitude lines for depth cue (rings parallel to equator at heights ±0.5, ±0.85)
+  function addLatitudeRing(scene, height, color, opacity, segments) {
+    const r = Math.sqrt(Math.max(0, 1 - height*height));
+    const pts = [];
+    for (let i = 0; i <= segments; i++) {
+      const a = (i / segments) * 2 * Math.PI;
+      pts.push(new THREE.Vector3(r * Math.cos(a), height, r * Math.sin(a)));
+    }
+    const geom = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+    scene.add(new THREE.Line(geom, mat));
+  }
+  for (const h of [-0.85, -0.5, 0.5, 0.85]) {
+    addLatitudeRing(scene, h, 0x0d6b3f, 0.35, 64);
+  }
 
-  // Classical Bell region — cube inscribed at |S|=2 → half-side = 1/√2
-  const half = 1 / Math.sqrt(2);
-  const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(2*half, 2*half, 2*half),
-    new THREE.MeshBasicMaterial({ color: 0xc44, wireframe: true, transparent: true, opacity: 0.7 })
+  // Classical Bell region — cube fully inside sphere
+  // Cube vertices touch sphere along the (1,1,1) diagonal at |S|=2 plane:
+  //   diagonal-distance = 1/√2, vertex coord = 1/√6  ≈ 0.408
+  // (Along axes, cube face is at 1/√6 < sphere radius 1 → cube clearly inside)
+  const half = 1 / Math.sqrt(6);
+  const cubeGeom = new THREE.BoxGeometry(2*half, 2*half, 2*half);
+  const cubeFill = new THREE.Mesh(
+    cubeGeom,
+    new THREE.MeshBasicMaterial({ color: 0xffdada, transparent: true, opacity: 0.45, depthWrite: false })
   );
-  scene.add(cube);
+  scene.add(cubeFill);
+  const cubeEdges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(cubeGeom),
+    new THREE.LineBasicMaterial({ color: 0xa01818 })
+  );
+  scene.add(cubeEdges);
 
-  // Axes (subtle)
-  const axesHelper = new THREE.AxesHelper(1.2);
-  axesHelper.material.opacity = 0.25;
-  axesHelper.material.transparent = true;
-  scene.add(axesHelper);
-
-  // Moving point (current |S|)
+  // Moving point (current |S|) — strong orange against light bg
   const point = new THREE.Mesh(
-    new THREE.SphereGeometry(0.06, 16, 12),
-    new THREE.MeshBasicMaterial({ color: 0xffaa00 })
+    new THREE.SphereGeometry(0.07, 16, 12),
+    new THREE.MeshBasicMaterial({ color: 0xe07b00 })
   );
   scene.add(point);
 
@@ -886,7 +939,7 @@ function initViz3() {
     new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,0)
   ]);
   const trail = new THREE.Line(trailGeom,
-    new THREE.LineBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.6 })
+    new THREE.LineBasicMaterial({ color: 0xe07b00, transparent: true, opacity: 0.8, linewidth: 2 })
   );
   scene.add(trail);
 
@@ -937,9 +990,10 @@ function updateViz3(g) {
   const d = 1/Math.sqrt(3);
   const x = r * d, y = r * d, z = r * d;
   viz3.point.position.set(x, y, z);
-  // Recolor based on inside/outside cube
+  // Recolor based on inside/outside cube (orange while inside, green once across)
   const insideCube = (S <= 2.0001);
-  viz3.point.material.color.setHex(insideCube ? 0xffaa00 : 0x2a7);
+  viz3.point.material.color.setHex(insideCube ? 0xe07b00 : 0x1a8f5a);
+  viz3.trail.material.color.setHex(insideCube ? 0xe07b00 : 0x1a8f5a);
   // Update trail
   viz3.trail.geometry.setFromPoints([
     new THREE.Vector3(0,0,0),
@@ -957,14 +1011,14 @@ function drawViz1(samples) {
   const w = canvas.clientWidth, h = canvas.clientHeight;
   canvas.width = w * dpr; canvas.height = h * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.fillStyle = '#0e0e14';
+  ctx.fillStyle = '#f5f7fa';
   ctx.fillRect(0, 0, w, h);
 
   const cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 18;
 
   // Unit circle
-  ctx.strokeStyle = '#444';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#9aa0aa';
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.arc(cx, cy, R, 0, 2 * Math.PI);
   ctx.stroke();
@@ -973,8 +1027,8 @@ function drawViz1(samples) {
   const axes = [
     { angle: 0,           color: '#0a4d8c', label: 'a₁=0' },
     { angle: Math.PI/2,   color: '#0a4d8c', label: 'a₂=π/2' },
-    { angle: Math.PI/4,   color: '#7ab',    label: 'b₁=π/4' },
-    { angle: 3*Math.PI/4, color: '#7ab',    label: 'b₂=3π/4' }
+    { angle: Math.PI/4,   color: '#3a6c9e', label: 'b₁=π/4' },
+    { angle: 3*Math.PI/4, color: '#3a6c9e', label: 'b₂=3π/4' }
   ];
   ctx.lineWidth = 2;
   for (const a of axes) {
@@ -985,26 +1039,31 @@ function drawViz1(samples) {
     ctx.stroke();
     // Label
     ctx.fillStyle = a.color;
-    ctx.font = '10px monospace';
+    ctx.font = 'bold 10px monospace';
     ctx.fillText(a.label,
       cx + (R+8) * Math.cos(a.angle) - 12,
       cy - (R+8) * Math.sin(a.angle));
   }
 
-  // Sample points
+  // Sample points — bigger, saturated, with white outline for pop
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1;
   for (const s of samples) {
-    const x = cx + R * 0.86 * Math.cos(s.phase);
-    const y = cy - R * 0.86 * Math.sin(s.phase);
-    ctx.fillStyle = s.product > 0 ? '#2a7' : '#c44';
-    ctx.globalAlpha = 0.7;
+    // Jitter radially so dots don't all overlap on the same circle
+    const rr = R * (0.55 + 0.4 * Math.random());
+    const x = cx + rr * Math.cos(s.phase);
+    const y = cy - rr * Math.sin(s.phase);
+    ctx.fillStyle = s.product > 0 ? '#0a8a3a' : '#c01616';
+    ctx.globalAlpha = 0.9;
     ctx.beginPath();
-    ctx.arc(x, y, 2, 0, 2 * Math.PI);
+    ctx.arc(x, y, 3.5, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.stroke();
   }
   ctx.globalAlpha = 1.0;
 
   // Center label
-  ctx.fillStyle = '#aaa';
+  ctx.fillStyle = '#666';
   ctx.font = 'bold 11px sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('hidden-variable phase space', cx, h - 4);
@@ -1021,90 +1080,234 @@ function drawViz4() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
   canvas.width = w * dpr; canvas.height = h * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.fillStyle = '#0e0e14';
+  ctx.fillStyle = '#f5f7fa';
   ctx.fillRect(0, 0, w, h);
 
-  const cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 30;
+  // Right-side legend area
+  const legendW = 220;
+  const cx = (w - legendW) / 2, cy = h / 2, R = Math.min(w - legendW, h) / 2 - 30;
 
-  // Unit circle (correlation circle for singlet)
-  ctx.strokeStyle = '#444';
-  ctx.lineWidth = 1;
+  // Unit circle
+  ctx.strokeStyle = '#9aa0aa';
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.arc(cx, cy, R, 0, 2 * Math.PI);
   ctx.stroke();
-  // Half-circle markers at ±1/√2
+
+  // Grid: 1/√2 markers
   const invSqrt2 = 1/Math.sqrt(2);
-  ctx.strokeStyle = '#222';
+  ctx.strokeStyle = '#dfe3e9';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
   ctx.beginPath();
-  ctx.moveTo(cx - R*invSqrt2, cy + R); ctx.lineTo(cx - R*invSqrt2, cy - R);
-  ctx.moveTo(cx + R*invSqrt2, cy + R); ctx.lineTo(cx + R*invSqrt2, cy - R);
+  ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy);  // x-axis
+  ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R);  // y-axis
   ctx.stroke();
+  ctx.setLineDash([]);
 
-  // Alice axes
-  const alice = [0, Math.PI/2];
-  ctx.strokeStyle = '#2a7';
-  ctx.lineWidth = 2;
-  for (const a of alice) {
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + R * Math.cos(a), cy - R * Math.sin(a));
-    ctx.stroke();
-  }
-  // Bob axes
-  const bob = [Math.PI/4, 3*Math.PI/4];
-  ctx.strokeStyle = '#0a4d8c';
-  for (const b of bob) {
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + R * Math.cos(b), cy - R * Math.sin(b));
-    ctx.stroke();
-  }
-
-  // E_ij values (-cos(a-b)) plotted as arcs / labels
-  ctx.font = '11px monospace';
-  ctx.fillStyle = '#ffaa00';
-  const pairs = [
-    [0, Math.PI/4, 'E₁₁'],
-    [0, 3*Math.PI/4, 'E₁₂'],
-    [Math.PI/2, Math.PI/4, 'E₂₁'],
-    [Math.PI/2, 3*Math.PI/4, 'E₂₂']
+  const ALICE = [
+    { ang: 0,           label: 'a₁ = 0' },
+    { ang: Math.PI/2,   label: 'a₂ = π/2' }
   ];
-  let yLabel = 18;
-  ctx.textAlign = 'left';
-  for (const [a, b, name] of pairs) {
-    const E = -Math.cos(a - b);
-    ctx.fillStyle = E > 0 ? '#2a7' : '#c44';
-    ctx.fillText(`${name}(${(a/Math.PI).toFixed(2)}π, ${(b/Math.PI).toFixed(2)}π) = ${E.toFixed(4)}`, 10, yLabel);
-    yLabel += 14;
+  const BOB = [
+    { ang: Math.PI/4,   label: 'b₁ = π/4' },
+    { ang: 3*Math.PI/4, label: 'b₂ = 3π/4' }
+  ];
+
+  // 45° arc fans between each Alice and Bob — visual proof that all four
+  // angle differences are π/4, so all four |E_ij| = cos(π/4) = 1/√2
+  ctx.strokeStyle = '#e07b00';
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.35;
+  for (const a of ALICE) {
+    for (const b of BOB) {
+      const r = R * 0.22;
+      const a0 = Math.min(a.ang, b.ang), a1 = Math.max(a.ang, b.ang);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, -a1, -a0);  // canvas y is flipped, so negate
+      ctx.stroke();
+    }
   }
-  // Sum label
-  ctx.fillStyle = '#ffaa00';
-  ctx.textAlign = 'right';
-  ctx.font = 'bold 14px monospace';
-  const S = Math.abs(-Math.cos(0 - Math.PI/4) - (-Math.cos(0 - 3*Math.PI/4))
-                    + (-Math.cos(Math.PI/2 - Math.PI/4)) + (-Math.cos(Math.PI/2 - 3*Math.PI/4)));
-  ctx.fillText(`|S| = ${S.toFixed(6)} = 2√2`, w - 10, h - 12);
-  ctx.font = '11px monospace';
+  ctx.globalAlpha = 1;
+
+  // Alice axes (green, thick)
+  ctx.strokeStyle = '#0a8a3a';
+  ctx.lineWidth = 3;
+  for (const a of ALICE) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(a.ang), cy - R * Math.sin(a.ang));
+    ctx.stroke();
+    // Arrowhead
+    const ex = cx + R * Math.cos(a.ang), ey = cy - R * Math.sin(a.ang);
+    const ar = 8;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - ar*Math.cos(a.ang - 0.4), ey + ar*Math.sin(a.ang - 0.4));
+    ctx.lineTo(ex - ar*Math.cos(a.ang + 0.4), ey + ar*Math.sin(a.ang + 0.4));
+    ctx.closePath();
+    ctx.fillStyle = '#0a8a3a';
+    ctx.fill();
+    // Label
+    ctx.fillStyle = '#0a8a3a';
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(a.label, cx + (R+12)*Math.cos(a.ang), cy - (R+12)*Math.sin(a.ang));
+  }
+
+  // Bob axes (blue, thick)
+  ctx.strokeStyle = '#0a4d8c';
+  for (const b of BOB) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(b.ang), cy - R * Math.sin(b.ang));
+    ctx.stroke();
+    const ex = cx + R * Math.cos(b.ang), ey = cy - R * Math.sin(b.ang);
+    const ar = 8;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - ar*Math.cos(b.ang - 0.4), ey + ar*Math.sin(b.ang - 0.4));
+    ctx.lineTo(ex - ar*Math.cos(b.ang + 0.4), ey + ar*Math.sin(b.ang + 0.4));
+    ctx.closePath();
+    ctx.fillStyle = '#0a4d8c';
+    ctx.fill();
+    ctx.fillStyle = '#0a4d8c';
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(b.label, cx + (R+10)*Math.cos(b.ang), cy - (R+10)*Math.sin(b.ang));
+  }
+
+  // Projection dots — orange, on each Bob axis at distance cos(45°) = 1/√2
+  // showing the geometric projection of singlet onto each axis pair
+  ctx.fillStyle = '#e07b00';
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  for (const b of BOB) {
+    const px = cx + R * invSqrt2 * Math.cos(b.ang);
+    const py = cy - R * invSqrt2 * Math.sin(b.ang);
+    ctx.beginPath(); ctx.arc(px, py, 6, 0, 2*Math.PI); ctx.fill(); ctx.stroke();
+  }
+
+  // π/4 label in the center fan
+  ctx.fillStyle = '#e07b00';
+  ctx.font = 'bold 12px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('π/4', cx + R*0.28, cy - R*0.08);
   ctx.textAlign = 'start';
 
-  // Dots at ±1/√2 on each axis to show E values
-  ctx.fillStyle = '#ffaa00';
-  for (const [a, b] of pairs) {
-    const E = -Math.cos(a - b);
-    // Plot at angle (a+b)/2 along unit circle, radius |E|·R
-    const ang = (a + b) / 2;
-    const x = cx + R * E * Math.cos(ang);
-    const y = cy - R * E * Math.sin(ang);
-    ctx.beginPath(); ctx.arc(x, y, 4, 0, 2*Math.PI); ctx.fill();
+  // ============================================================
+  // Born-rule sampled dots — one cluster per E_ij pair
+  // Color: green for A·B = +1, red for A·B = −1
+  // ============================================================
+  if (demo4Dots.length > 0) {
+    ctx.globalAlpha = 0.75;
+    for (const d of demo4Dots) {
+      const r = R * d.rad;
+      const x = cx + r * Math.cos(d.ang);
+      const y = cy - r * Math.sin(d.ang);
+      ctx.fillStyle = d.product > 0 ? '#0a8a3a' : '#b02828';
+      ctx.beginPath();
+      ctx.arc(x, y, 2.2, 0, 2*Math.PI);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    // Cluster labels at the zone centers
+    ctx.fillStyle = '#444';
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'center';
+    for (let k = 0; k < 4; k++) {
+      const labelRad = R * 0.92;
+      const lx = cx + labelRad * Math.cos(D4_ZONES[k]);
+      const ly = cy - labelRad * Math.sin(D4_ZONES[k]);
+      // Background pill for readability
+      const text = D4_LABELS[k];
+      const padX = 5, padY = 2;
+      ctx.font = 'bold 11px monospace';
+      const tw = ctx.measureText(text).width;
+      ctx.fillStyle = 'rgba(245, 247, 250, 0.85)';
+      ctx.fillRect(lx - tw/2 - padX, ly - 8, tw + 2*padX, 14);
+      ctx.fillStyle = '#0a4d8c';
+      ctx.fillText(text, lx, ly + 4);
+    }
+    ctx.textAlign = 'start';
   }
+
+  // ============================================================
+  // Right-side panel: the algebra
+  // ============================================================
+  const px = w - legendW + 10;
+  ctx.fillStyle = '#444';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Singlet correlation', px, 20);
+  ctx.font = '11px monospace';
+  ctx.fillText('E(a, b) = −cos(a − b)', px, 38);
+
+  ctx.fillStyle = '#666';
+  ctx.fillText('Each |aᵢ − bⱼ| = π/4', px, 60);
+  ctx.fillStyle = '#e07b00';
+  ctx.font = 'bold 11px monospace';
+  ctx.fillText('→ |Eᵢⱼ| = cos(π/4) = 1/√2', px, 76);
+
+  // Four E_ij values — correct signs from E_ij = -cos(a_i - b_j)
+  ctx.font = '11px monospace';
+  ctx.fillStyle = '#444';
+  const sampling = demo4Sample.total > 0;
+  ctx.fillText(sampling ? `Sampled values (N = ${demo4Sample.total}):` : 'Closed-form values:', px, 102);
+
+  // Compute current displayed E values (either exact or sampled means)
+  const expected = [
+    ['E₁₁', -1/Math.sqrt(2)],
+    ['E₁₂', +1/Math.sqrt(2)],
+    ['E₂₁', -1/Math.sqrt(2)],
+    ['E₂₂', -1/Math.sqrt(2)]
+  ];
+  const sampled = sampling ? [
+    ['E₁₁', demo4Sample.sumProd[0] / demo4Sample.perPair],
+    ['E₁₂', demo4Sample.sumProd[1] / demo4Sample.perPair],
+    ['E₂₁', demo4Sample.sumProd[2] / demo4Sample.perPair],
+    ['E₂₂', demo4Sample.sumProd[3] / demo4Sample.perPair]
+  ] : null;
+  const display = sampled || expected;
+
+  let yy = 120;
+  for (let i = 0; i < 4; i++) {
+    const [name, val] = display[i];
+    const sign = val >= 0 ? '+' : '−';
+    ctx.fillStyle = val > 0 ? '#0a8a3a' : '#b02828';
+    ctx.fillText(`${name} = ${sign}${Math.abs(val).toFixed(4)}`, px, yy);
+    if (sampling) {
+      // Target sign + small residual in a second fixed column
+      const target = expected[i][1];
+      const tsign = target >= 0 ? '+' : '−';
+      const dev = val - target;
+      ctx.fillStyle = '#888';
+      ctx.fillText(`(target ${tsign}1/√2)`, px + 105, yy);
+    }
+    yy += 14;
+  }
+
+  // CHSH sum
+  ctx.strokeStyle = '#d0d4dc';
+  ctx.beginPath();
+  ctx.moveTo(px, yy + 4); ctx.lineTo(px + 180, yy + 4); ctx.stroke();
+  ctx.fillStyle = '#0a4d8c';
+  ctx.font = 'bold 12px monospace';
+  ctx.fillText('S = E₁₁ − E₁₂ + E₂₁ + E₂₂', px, yy + 22);
+  // Compute |S| from current displayed values
+  const Sval = Math.abs(display[0][1] - display[1][1] + display[2][1] + display[3][1]);
+  ctx.fillStyle = '#e07b00';
+  ctx.font = 'bold 14px monospace';
+  ctx.fillText(`|S| = ${Sval.toFixed(5)}`, px, yy + 42);
+  ctx.fillStyle = '#666';
+  ctx.font = '10px monospace';
+  ctx.fillText(`target: √8 = ${Math.sqrt(8).toFixed(5)}`, px, yy + 58);
 }
 
 // =============================================================
-//  Hook §3.1 run → live visualization
+//  Hook §3.1 run → looping live visualization
 // =============================================================
-const origRunDemo1 = runDemo1;
-runDemo1 = function() {
-  // Capture a smaller sample for visualization (textual stats still 5000)
+let demo1Interval = null;
+function runDemo1Once() {
   const N_VIZ = 800;
   const samples = [];
   const a1 = 0, b1 = Math.PI/4;
@@ -1115,21 +1318,259 @@ runDemo1 = function() {
     samples.push({ phase, product: A * B });
   }
   drawViz1(samples);
-  origRunDemo1();
-};
+  runDemo1();  // textual stats (the original 5000-trial CHSH calc)
+}
+function toggleDemo1() {
+  const btn = document.getElementById('btn1');
+  if (demo1Interval === null) {
+    runDemo1Once();
+    demo1Interval = setInterval(runDemo1Once, 1000);
+    btn.textContent = 'Stop §3.1';
+    btn.classList.add('running');
+  } else {
+    clearInterval(demo1Interval);
+    demo1Interval = null;
+    btn.textContent = 'Start §3.1 (live, 1Hz)';
+    btn.classList.remove('running');
+  }
+}
 
-const origRunDemo4 = runDemo4;
-runDemo4 = function() {
-  origRunDemo4();
+
+// =============================================================
+//  §3.2 — animated zipper
+// =============================================================
+let demo2Interval = null;
+let demo2State = { N: 0, lastFast: '?' };
+function tickDemo2() {
+  if (demo2State.N >= 30) {
+    // Reset after reaching target
+    demo2State = { N: 0, lastFast: '?' };
+  }
+  // At each step: A is fast on odd N, slow on even; B is opposite.
+  // The fast side advances N.
+  const oddN = (demo2State.N % 2) === 1;
+  // Whichever side is FAST at this N drives the increment.
+  demo2State.lastFast = oddN ? 'A' : 'B';
+  demo2State.N += 1;
+  drawViz2();
+  // After the tick, also update the textual output once we have ≥4 ticks
+  if (demo2State.N >= 4) {
+    runDemo2();  // shows the final |S|=2 result text
+  }
+}
+function toggleDemo2() {
+  const btn = document.getElementById('btn2');
+  if (demo2Interval === null) {
+    demo2State = { N: 0, lastFast: '?' };
+    drawViz2();
+    demo2Interval = setInterval(tickDemo2, 250);
+    btn.textContent = 'Stop §3.2';
+    btn.classList.add('running');
+  } else {
+    clearInterval(demo2Interval);
+    demo2Interval = null;
+    btn.textContent = 'Start §3.2 (animated zipper)';
+    btn.classList.remove('running');
+  }
+}
+
+// =============================================================
+//  §3.4 — Born-rule sampler for the singlet state
+// =============================================================
+// For the singlet |Ψ⁻⟩ at axes (a, b), the joint distribution is:
+//   P(A=+, B=+) = P(A=−, B=−) = (1/2)·sin²((a−b)/2)
+//   P(A=+, B=−) = P(A=−, B=+) = (1/2)·cos²((a−b)/2)
+// → E(a,b) = mean(A·B) → −cos(a−b)
+let demo4Sample = { total: 0, perPair: 0, sumProd: [0, 0, 0, 0] };
+let demo4Interval = null;
+let demo4Dots = [];   // Sample dot scatter: {pairIdx, product, ang, rad}
+const D4_PAIRS = [
+  [0,           Math.PI/4],   // E_11
+  [0,           3*Math.PI/4], // E_12
+  [Math.PI/2,   Math.PI/4],   // E_21
+  [Math.PI/2,   3*Math.PI/4]  // E_22
+];
+// Four scatter "zones" — one per E_ij pair, spaced 90° around the circle
+// so clusters land in all four quadrants. Each zone is offset π/8 from the
+// nearest measurement axis to avoid overlap with the axis lines themselves.
+// Measurement axes pass through origin (treat them as full lines), so each
+// E_ij pair lives in either of two mirror-image wedges — we use one wedge
+// per pair, choosing the four that tile the full 2π evenly.
+const D4_ZONES = [
+  Math.PI/8,       // E_11 — NE quadrant (between a1=0 and b1=π/4)
+  5*Math.PI/8,     // E_12 — NW quadrant (between a2=π/2 and b2=3π/4)
+  9*Math.PI/8,     // E_21 — SW quadrant (mirror of E_11 through origin)
+  13*Math.PI/8     // E_22 — SE quadrant (mirror of E_12 through origin)
+];
+const D4_LABELS = ['E₁₁', 'E₁₂', 'E₂₁', 'E₂₂'];
+const MAX_DOTS = 800;
+function sampleSinglet(a, b) {
+  // Returns [A, B] each ±1 sampled from singlet joint Born distribution
+  const delta = a - b;
+  const s2 = Math.sin(delta/2);
+  const Pequal = s2 * s2;   // P(A=B) — singlet anticorrelates at δ=0
+  if (Math.random() < 0.5) {
+    // A=+1
+    return Math.random() < Pequal ? [1, 1] : [1, -1];
+  } else {
+    return Math.random() < Pequal ? [-1, -1] : [-1, 1];
+  }
+}
+function tickDemo4Sampling() {
+  const N_PER_PAIR = 500;
+  const N_VIZ_PER_PAIR = 70;  // subsample for visualization scatter
+  for (let k = 0; k < 4; k++) {
+    const [a, b] = D4_PAIRS[k];
+    let acc = demo4Sample.sumProd[k];
+    for (let i = 0; i < N_PER_PAIR; i++) {
+      const [A, B] = sampleSinglet(a, b);
+      const prod = A * B;
+      acc += prod;
+      // Add subsample to visualization scatter
+      if (i < N_VIZ_PER_PAIR) {
+        demo4Dots.push({
+          pairIdx: k,
+          product: prod,
+          // Random position within angular wedge + radial range
+          ang: D4_ZONES[k] + (Math.random() - 0.5) * Math.PI/6,
+          rad: 0.22 + Math.random() * 0.62
+        });
+      }
+    }
+    demo4Sample.sumProd[k] = acc;
+  }
+  // Keep the most recent MAX_DOTS samples (sliding window for visual)
+  if (demo4Dots.length > MAX_DOTS) {
+    demo4Dots = demo4Dots.slice(demo4Dots.length - MAX_DOTS);
+  }
+  demo4Sample.perPair += N_PER_PAIR;
+  demo4Sample.total = 4 * demo4Sample.perPair;
   drawViz4();
-};
+  // Update text output with running stats
+  const E = demo4Sample.sumProd.map(s => s / demo4Sample.perPair);
+  const S = Math.abs(E[0] - E[1] + E[2] + E[3]);
+  document.getElementById('out4').textContent =
+    `Born-rule sampling of |Ψ⁻⟩ at the four CHSH axis pairs.\n` +
+    `Trials per pair: ${demo4Sample.perPair.toLocaleString()}   total: ${demo4Sample.total.toLocaleString()}\n\n` +
+    `  E₁₁ = ${E[0].toFixed(6)}    target −1/√2 = ${(-1/Math.sqrt(2)).toFixed(6)}\n` +
+    `  E₁₂ = ${E[1].toFixed(6)}    target +1/√2 = ${(+1/Math.sqrt(2)).toFixed(6)}\n` +
+    `  E₂₁ = ${E[2].toFixed(6)}    target −1/√2 = ${(-1/Math.sqrt(2)).toFixed(6)}\n` +
+    `  E₂₂ = ${E[3].toFixed(6)}    target −1/√2 = ${(-1/Math.sqrt(2)).toFixed(6)}\n\n` +
+    `  |S| = |E₁₁ − E₁₂ + E₂₁ + E₂₂| = ${S.toFixed(6)}\n` +
+    `  target: √8 = ${Math.sqrt(8).toFixed(6)}\n` +
+    `  residual: ${Math.abs(S - Math.sqrt(8)).toExponential(2)}\n\n` +
+    `The √8 is being CONSTRUCTED from random ±1 outcomes governed by the\n` +
+    `singlet's Born-rule probabilities sin²((a−b)/2). No assumption of the\n` +
+    `bound — it emerges from sampling the hypersphere geometry.`;
+}
+function toggleDemo4Sampling() {
+  const btn = document.getElementById('btn4');
+  if (demo4Interval === null) {
+    // Reset on start
+    demo4Sample = { total: 0, perPair: 0, sumProd: [0, 0, 0, 0] };
+    demo4Dots = [];
+    tickDemo4Sampling();
+    demo4Interval = setInterval(tickDemo4Sampling, 1000);
+    btn.textContent = 'Stop sampling §3.4';
+    btn.classList.add('running');
+  } else {
+    clearInterval(demo4Interval);
+    demo4Interval = null;
+    btn.textContent = 'Start sampling §3.4 (Born rule, 1Hz)';
+    btn.classList.remove('running');
+    // Reset to closed-form display
+    demo4Sample = { total: 0, perPair: 0, sumProd: [0, 0, 0, 0] };
+    demo4Dots = [];
+    drawViz4();
+  }
+}
 
-// Hook γ slider → 3D viz update
-const origUpdateGamma = updateGamma;
-updateGamma = function(rawVal) {
-  origUpdateGamma(rawVal);
-  updateViz3(parseFloat(rawVal));
-};
+function drawViz2() {
+  const canvas = document.getElementById('canvas2');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#f5f7fa';
+  ctx.fillRect(0, 0, w, h);
+
+  const TARGET = 30;
+  const margin = 24;
+  const trackTop = 40;
+  const trackHeight = 38;
+  const trackGap = 20;
+  const cellW = (w - 2*margin) / TARGET;
+
+  // Title row
+  ctx.fillStyle = '#444';
+  ctx.font = 'bold 12px monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('A  (fast on odd N)', margin, trackTop - 8);
+  ctx.fillText('B  (fast on even N)', margin, trackTop + trackHeight + trackGap - 8);
+
+  // Counter / state readout (right)
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#0a4d8c';
+  ctx.font = 'bold 14px monospace';
+  ctx.fillText(`N = ${demo2State.N} / ${TARGET}`, w - margin, 18);
+  ctx.fillStyle = demo2State.lastFast === 'A' ? '#0a8a3a' : (demo2State.lastFast === 'B' ? '#0a4d8c' : '#888');
+  ctx.font = '12px monospace';
+  ctx.fillText(`last tick: ${demo2State.lastFast} (fast)`, w - margin, 32);
+
+  // Draw cells for each N value 0..TARGET-1
+  for (let n = 0; n < TARGET; n++) {
+    const x = margin + n * cellW;
+    const isOdd = (n % 2) === 1;
+    const filled = n < demo2State.N;
+    // A track: green when odd (fast for A), grey when even (slow)
+    let aColor = '#d0d4dc';
+    let bColor = '#d0d4dc';
+    if (filled) {
+      aColor = isOdd ? '#0a8a3a' : '#e8eef5';   // A fast on odd (filled green), idle on even
+      bColor = isOdd ? '#e8eef5' : '#0a4d8c';   // B fast on even (filled blue)
+    } else {
+      aColor = isOdd ? '#cde6d4' : '#f0f2f5';   // light preview
+      bColor = isOdd ? '#f0f2f5' : '#cdd9e6';
+    }
+    // A track
+    ctx.fillStyle = aColor;
+    ctx.fillRect(x + 1, trackTop, Math.max(0, cellW - 2), trackHeight);
+    // B track
+    ctx.fillStyle = bColor;
+    ctx.fillRect(x + 1, trackTop + trackHeight + trackGap, Math.max(0, cellW - 2), trackHeight);
+    // N label below (every 5)
+    if (n % 5 === 0) {
+      ctx.fillStyle = '#888';
+      ctx.font = '9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(n.toString(), x + cellW/2, trackTop + 2*trackHeight + trackGap + 11);
+    }
+  }
+  // Final N=TARGET label
+  ctx.fillStyle = '#888';
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(TARGET.toString(), margin + TARGET * cellW, trackTop + 2*trackHeight + trackGap + 11);
+
+  // CHSH banner (when N reaches target)
+  if (demo2State.N >= TARGET) {
+    ctx.fillStyle = '#0a4d8c';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Target reached → CHSH = 2.00000  (Bell ceiling — exact)',
+      w/2, h - 6);
+  } else if (demo2State.N >= 4) {
+    ctx.fillStyle = '#888';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`CHSH running… target |S| = 2.00000 exact at N=${TARGET}`,
+      w/2, h - 6);
+  }
+  ctx.textAlign = 'start';
+}
+
 
 // Init three.js once page loads
 window.addEventListener('load', () => {
@@ -1137,6 +1578,8 @@ window.addEventListener('load', () => {
   updateViz3(0);
   // Draw demo 4 viz on load to show the structure
   drawViz4();
+  // Draw demo 2 viz (empty initial state — shows tracks ready)
+  drawViz2();
 });
 
 // On load: initialize γ=0 reading
