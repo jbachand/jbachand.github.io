@@ -163,11 +163,43 @@
   .link a { color: var(--muted); text-decoration: none; }
   .link a:hover { color: var(--accent-soft); }
 
+  .info-toggle {
+    display: none;
+    width: 100%;
+    padding: 5px 0;
+    margin: 8px 0 0;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    font-size: 0.74rem;
+    transition: all 0.15s;
+  }
+  .info-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
   @media (max-width: 720px) {
-    .panel { max-width: calc(100vw - 32px); padding: 10px 14px; }
+    .panel {
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      max-width: none;
+      padding: 10px 14px;
+    }
     .panel h1 { font-size: 0.95rem; }
+    .panel .subtitle { font-size: 0.7rem; margin-bottom: 6px; }
     .panel p { font-size: 0.74rem; }
-    .legend { font-size: 0.65rem; padding: 6px 10px; }
+    .panel .info-text { display: none; }
+    .panel.expanded .info-text { display: block; }
+    .info-toggle { display: block; }
+    .legend { display: none; }      /* info already in panel + duplicates the link area */
+    .link {
+      font-size: 0.65rem;
+      padding: 6px 10px;
+      bottom: 8px;
+      right: 8px;
+    }
   }
 </style>
 </head>
@@ -176,21 +208,26 @@
 <div class="panel">
   <h1>Chain dimensions → equator</h1>
   <div class="subtitle">π-universe · concentration of measure · drag the slider</div>
-  <p>
-    Each ramp of the π-chain adds geometric resolution to the underlying
-    trajectory. The shadow is a fixed-dimensional projection onto a
-    chosen direction. As chain depth grows, that projection
-    <span class="term">concentrates</span> — the cloud of possible
-    outputs collapses onto the <span class="term">equator</span>
-    perpendicular to the projection axis.
-  </p>
-  <p>
-    Math: a uniform point on S<sup>n−1</sup> has coordinate variance
-    <em>1/n</em>. As n → ∞, every coordinate → 0 in distribution. The
-    point lives on the equator with respect to <em>any</em> axis. This
-    is why the chain's 512-bit shadow stays fixed at any depth (Law 6,
-    Law 31): the trajectory grows, but its projection doesn't.
-  </p>
+
+  <button class="info-toggle" id="info-toggle" onclick="toggleInfo()">ⓘ What is this?</button>
+
+  <div class="info-text">
+    <p>
+      Each ramp of the π-chain adds geometric resolution to the underlying
+      trajectory. The shadow is a fixed-dimensional projection onto a
+      chosen direction. As chain depth grows, that projection
+      <span class="term">concentrates</span> — the cloud of possible
+      outputs collapses onto the <span class="term">equator</span>
+      perpendicular to the projection axis.
+    </p>
+    <p>
+      Math: a uniform point on S<sup>n−1</sup> has coordinate variance
+      <em>1/n</em>. As n → ∞, every coordinate → 0 in distribution. The
+      point lives on the equator with respect to <em>any</em> axis. This
+      is why the chain's 512-bit shadow stays fixed at any depth (Law 6,
+      Law 31): the trajectory grows, but its projection doesn't.
+    </p>
+  </div>
 
   <div class="controls">
     <label>
@@ -515,6 +552,16 @@ function animate(t) {
   if (playing) tickPlay(t);
   updateCamera();
   renderer.render(scene, camera);
+}
+
+// Toggle the info text on mobile
+function toggleInfo() {
+  const panel = document.querySelector('.panel');
+  const btn = document.getElementById('info-toggle');
+  panel.classList.toggle('expanded');
+  btn.textContent = panel.classList.contains('expanded')
+    ? '× Hide explanation'
+    : 'ⓘ What is this?';
 }
 
 // Optional URL param: ?n=<sliderVal in 0..100>  — sets initial slider state
