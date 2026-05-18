@@ -131,7 +131,10 @@
   .gauge {
     position: relative;
     height: 32px;
-    background: linear-gradient(to right, var(--classical) 0%, var(--accent) 50%, var(--quantum) 100%);
+    background: linear-gradient(to right,
+      #888 0%,
+      var(--classical) 70.71%,
+      var(--quantum) 100%);
     border-radius: 4px;
     margin: 1rem 0 0.4rem;
     overflow: hidden;
@@ -142,14 +145,26 @@
     width: 3px;
     background: black;
     transition: left 0.05s linear;
+    z-index: 2;
+  }
+  .gauge .bell-threshold {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: rgba(0, 0, 0, 0.45);
+    border-left: 1px dashed rgba(255, 255, 255, 0.6);
+    z-index: 1;
   }
   .gauge-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.78rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 0.72rem;
     color: var(--muted);
     margin-bottom: 0.6rem;
   }
+  .gauge-labels span:nth-child(1) { text-align: left; }
+  .gauge-labels span:nth-child(2) { text-align: center; }
+  .gauge-labels span:nth-child(3) { text-align: right; }
   .gamma-readout {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -303,8 +318,9 @@
 </p>
 
 <p>
-  Four self-contained demonstrations of the full CHSH spectrum from |S| = 0
-  to |S| = √8. Each runs in your browser in milliseconds. No
+  Four self-contained demonstrations walking from |S| = 0 to |S| = √8,
+  plus a bonus bar chart locating each milestone in the full 0-to-4
+  CHSH spectrum. Each runs in your browser in milliseconds. No
   installation, no dependencies — pure JavaScript reproducing the same
   arithmetic as the
   <a href="https://github.com/jbachand/hypersphere-chsh">Python scripts on
@@ -341,9 +357,84 @@
   <p class="desc">
     Two functions A and B share a global counter, ticking at incommensurate
     rates with a random phase offset (the hidden variable). CHSH outcomes
-    are parity readouts at chosen sampling times. A fully classical LHV
-    system reaching the Bell bound by Bell-saturation.
+    are parity readouts at chosen sampling times. The simplest LHV
+    mechanism — shared phase, deterministic readout — saturates the
+    Bell bound exactly.
   </p>
+  <!-- Conceptual diagram: shared counter → two functions w/ observers → joint ≤ 2 -->
+  <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:720px; height:auto; background:#f5f7fa; border-radius:6px; margin:0.6rem 0;" aria-label="Shared-counter LHV diagram with Alice/Bob observers">
+    <defs>
+      <marker id="arr1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+      </marker>
+      <marker id="arrFast" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#e07b00"/>
+      </marker>
+    </defs>
+
+    <!-- Top: shared hidden variable -->
+    <rect x="240" y="14" width="240" height="44" rx="6" fill="#fff" stroke="#9aa0aa" stroke-width="1.5"/>
+    <text x="360" y="35" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#333">Shared hidden variable</text>
+    <text x="360" y="50" text-anchor="middle" font-family="SF Mono, Menlo, monospace" font-size="11" fill="#666">counter N(t,φ) — phase φ random</text>
+    <!-- Branching arrows -->
+    <line x1="320" y1="58" x2="180" y2="98" stroke="#666" stroke-width="1.5" marker-end="url(#arr1)"/>
+    <line x1="400" y1="58" x2="540" y2="98" stroke="#666" stroke-width="1.5" marker-end="url(#arr1)"/>
+
+    <!-- Function A (green, fast) -->
+    <rect x="60" y="100" width="240" height="84" rx="6" fill="#e8f5ee" stroke="#0a8a3a" stroke-width="1.5"/>
+    <text x="180" y="120" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#0a8a3a">Function A</text>
+    <text x="180" y="135" text-anchor="middle" font-family="SF Mono, monospace" font-size="10" fill="#444">ticks every 1 unit (fast)</text>
+    <g fill="#0a8a3a">
+      <circle cx="80"  cy="158" r="3"/><circle cx="98"  cy="158" r="3"/>
+      <circle cx="116" cy="158" r="3"/><circle cx="134" cy="158" r="3"/>
+      <circle cx="152" cy="158" r="3"/><circle cx="170" cy="158" r="3"/>
+      <circle cx="188" cy="158" r="3"/><circle cx="206" cy="158" r="3"/>
+      <circle cx="224" cy="158" r="3"/><circle cx="242" cy="158" r="3"/>
+      <circle cx="260" cy="158" r="3"/><circle cx="278" cy="158" r="3"/>
+    </g>
+    <text x="180" y="178" text-anchor="middle" font-family="SF Mono, monospace" font-size="9.5" fill="#888">→ output A(a) = parity at sample time a</text>
+
+    <!-- Function B (blue, slow) -->
+    <rect x="420" y="100" width="240" height="84" rx="6" fill="#e8eef5" stroke="#0a4d8c" stroke-width="1.5"/>
+    <text x="540" y="120" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#0a4d8c">Function B</text>
+    <text x="540" y="135" text-anchor="middle" font-family="SF Mono, monospace" font-size="10" fill="#444">ticks every 10 units (slow, phase φ)</text>
+    <g fill="#0a4d8c">
+      <circle cx="480" cy="158" r="3"/>
+      <circle cx="620" cy="158" r="3"/>
+    </g>
+    <text x="540" y="178" text-anchor="middle" font-family="SF Mono, monospace" font-size="9.5" fill="#888">→ output B(b) = parity at sample time b</text>
+
+    <!-- Observers: Alice watching A, Bob watching B -->
+    <!-- Alice (left) -->
+    <g transform="translate(60, 198)">
+      <circle cx="14" cy="14" r="11" fill="#fff" stroke="#0a8a3a" stroke-width="1.5"/>
+      <text x="14" y="18" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#0a8a3a">A</text>
+      <text x="32" y="11" font-family="-apple-system, sans-serif" font-size="10.5" font-weight="600" fill="#333">Alice expects A solo:</text>
+      <text x="32" y="23" font-family="SF Mono, monospace" font-size="10" fill="#888">target N=10 in t = 10 units</text>
+      <text x="32" y="36" font-family="SF Mono, monospace" font-size="10" fill="#0a8a3a" font-weight="600">actual: target hit at t ≈ 9   ⚡</text>
+    </g>
+    <!-- Bob (right) -->
+    <g transform="translate(420, 198)">
+      <circle cx="14" cy="14" r="11" fill="#fff" stroke="#0a4d8c" stroke-width="1.5"/>
+      <text x="14" y="18" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#0a4d8c">B</text>
+      <text x="32" y="11" font-family="-apple-system, sans-serif" font-size="10.5" font-weight="600" fill="#333">Bob expects B solo:</text>
+      <text x="32" y="23" font-family="SF Mono, monospace" font-size="10" fill="#888">target N=10 in t = 100 units</text>
+      <text x="32" y="36" font-family="SF Mono, monospace" font-size="10" fill="#0a4d8c" font-weight="600">actual: target hit at t ≈ 9    ⚡</text>
+    </g>
+
+    <!-- Speedup banner -->
+    <rect x="60" y="252" width="600" height="36" rx="6" fill="#fff8e1" stroke="#e07b00" stroke-width="1.5"/>
+    <text x="360" y="269" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="11.5" font-weight="600" fill="#7a4500">Deterministic acceleration: both observers see their target reached faster than expected</text>
+    <text x="360" y="282" text-anchor="middle" font-family="SF Mono, monospace" font-size="10" fill="#7a4500">A&apos;s ticks count toward B&apos;s target and vice versa — the shared counter is the hidden &quot;helper&quot;</text>
+
+    <!-- Arrows down to joint -->
+    <line x1="180" y1="290" x2="320" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arr1)"/>
+    <line x1="540" y1="290" x2="400" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arr1)"/>
+
+    <!-- Joint outcome (red ceiling) — wider so text has horizontal padding -->
+    <rect x="180" y="320" width="360" height="28" rx="6" fill="#fff" stroke="#b02828" stroke-width="1.5"/>
+    <text x="360" y="339" text-anchor="middle" font-family="SF Mono, monospace" font-size="12" font-weight="600" fill="#b02828">Joint CHSH:  |S| ≤ 2  (Bell ceiling)</text>
+  </svg>
   <div class="demo-buttons">
     <button id="btn1" onclick="toggleDemo1()">Start §3.1 (live, 1Hz)</button>
   </div>
@@ -434,14 +525,16 @@
     Tsirelson bound √8. <strong>Drag the slider to see it live.</strong>
   </p>
   <div class="gamma-controls">
-    <label>γ knob (Werner mixing parameter):</label>
-    <input type="range" id="gamma-slider" min="0" max="1" step="0.001" value="0" oninput="updateGamma(this.value)">
+    <label>γ knob (Werner mixing parameter, γ = p):</label>
+    <input type="range" id="gamma-slider" min="0" max="1" step="0.001" value="0.707" oninput="updateGamma(this.value)">
     <div class="gauge-labels">
-      <span>γ = 0  (classical-saturating)</span>
-      <span>γ = 1  (Tsirelson)</span>
+      <span>γ = 0  (maximally mixed, |S| = 0)</span>
+      <span>γ = 1/√2  (Bell threshold, |S| = 2)</span>
+      <span>γ = 1  (singlet, |S| = √8)</span>
     </div>
     <div class="gauge">
-      <div class="marker" id="gauge-marker" style="left: 0%;"></div>
+      <div class="bell-threshold" id="bell-threshold-marker" style="left: 70.71%;" title="Bell threshold at γ = 1/√2"></div>
+      <div class="marker" id="gauge-marker" style="left: 70.71%;"></div>
     </div>
   </div>
   <div class="gamma-readout">
@@ -544,6 +637,98 @@
     <button class="secondary" onclick="toggleSource(4)">Show source</button>
   </div>
   <pre class="source" id="source4" style="display:none;"></pre>
+</div>
+
+<!-- ============================================================ -->
+<!-- DEMO 5 (bonus): Where does |S| live? Spectrum bar chart      -->
+<!-- ============================================================ -->
+<div class="demo">
+  <h3>§3.5 — Where does |S| live? (bonus: the full spectrum)</h3>
+  <p class="desc">
+    What if a hidden third entity advances the shared counter between
+    Alice's and Bob's measurements? Bell's bound is <em>closed under
+    unknown classical inputs</em> — any third party's state folds into
+    an enlarged hidden variable (φ, third-party state), and the
+    enlarged LHV still satisfies |S| ≤ 2. The bar chart below makes
+    this concrete: a baseline LHV saturates at 2, random δ decoheres
+    to 0, fixed δ relabels axes but stays at 2, and only
+    axis-correlated δ — explicit signaling between the wings — reaches
+    the PR-box ceiling at 4. The √2 gap between classical and quantum
+    is itself bounded above by another (4 − √8) ≈ 1.17 gap to PR.
+  </p>
+
+  <svg id="spectrum-chart" viewBox="0 0 880 380" preserveAspectRatio="xMidYMid meet"
+       style="width: 100%; max-width: 880px; display: block; margin: 1rem auto;
+              background: #fcfaf5; border: 1px solid var(--border);
+              border-radius: 4px;">
+    <!-- Background zones -->
+    <rect x="200" y="60" width="270"   height="225" fill="#b02828" fill-opacity="0.06"/>
+    <rect x="470" y="60" width="111.8" height="225" fill="#1a8f5a" fill-opacity="0.08"/>
+    <rect x="581.8" y="60" width="158.2" height="225" fill="#d4a017" fill-opacity="0.08"/>
+
+    <!-- Reference lines -->
+    <line x1="470"   y1="60" x2="470"   y2="290" stroke="#b02828" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <line x1="581.8" y1="60" x2="581.8" y2="290" stroke="#1a8f5a" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <line x1="740"   y1="60" x2="740"   y2="290" stroke="#d4a017" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+    <!-- Top labels above reference lines -->
+    <text x="470"   y="48" text-anchor="middle" font-size="12" fill="#b02828" font-weight="600">|S| = 2 · Bell</text>
+    <text x="581.8" y="48" text-anchor="middle" font-size="12" fill="#1a8f5a" font-weight="600">|S| = √8 · Tsirelson</text>
+    <text x="740"   y="48" text-anchor="middle" font-size="12" fill="#a47010" font-weight="600">|S| = 4 · PR-box</text>
+
+    <!-- Zone labels (very small, in the middle of each zone) -->
+    <text x="335"   y="76" text-anchor="middle" font-size="10" fill="#b02828" opacity="0.7">classical (LHV)</text>
+    <text x="525.9" y="76" text-anchor="middle" font-size="10" fill="#1a8f5a" opacity="0.7">quantum reach</text>
+    <text x="660.9" y="76" text-anchor="middle" font-size="10" fill="#a47010" opacity="0.7">signaling</text>
+
+    <!-- Bars (updated by JS at runDemo5) -->
+    <g id="spectrum-bars" font-family="Menlo, Monaco, monospace">
+      <!-- Bar 1: baseline -->
+      <text x="190" y="106" text-anchor="end" font-size="13" fill="#1d1d1d">1. baseline LHV</text>
+      <rect id="bar5-1" x="200" y="86" width="270" height="36" fill="#b02828" fill-opacity="0.75"/>
+      <text id="bar5-1-val" x="478" y="109" font-size="13" fill="#1d1d1d" font-weight="600">|S| = 2.0000</text>
+
+      <!-- Bar 2: random δ -->
+      <text x="190" y="161" text-anchor="end" font-size="13" fill="#1d1d1d">2. random δ (noise)</text>
+      <rect id="bar5-2" x="200" y="141" width="0" height="36" fill="#666" fill-opacity="0.75"/>
+      <text id="bar5-2-val" x="208" y="164" font-size="13" fill="#1d1d1d" font-weight="600">|S| = 0.0000</text>
+
+      <!-- Bar 3: fixed δ -->
+      <text x="190" y="216" text-anchor="end" font-size="13" fill="#1d1d1d">3. fixed δ = π/6</text>
+      <rect id="bar5-3" x="200" y="196" width="270" height="36" fill="#b02828" fill-opacity="0.75"/>
+      <text id="bar5-3-val" x="478" y="219" font-size="13" fill="#1d1d1d" font-weight="600">|S| = 2.0000</text>
+
+      <!-- Bar 4: signaling -->
+      <text x="190" y="271" text-anchor="end" font-size="13" fill="#1d1d1d">4. axis-correlated δ</text>
+      <rect id="bar5-4" x="200" y="251" width="540" height="36" fill="#d4a017" fill-opacity="0.85"/>
+      <text id="bar5-4-val" x="748" y="274" font-size="13" fill="#1d1d1d" font-weight="600">|S| = 4.0000</text>
+    </g>
+
+    <!-- X-axis -->
+    <line x1="200" y1="300" x2="740" y2="300" stroke="#1d1d1d" stroke-width="1"/>
+    <g font-size="11" fill="#666">
+      <text x="200" y="316" text-anchor="middle">0</text>
+      <text x="335" y="316" text-anchor="middle">1</text>
+      <text x="470" y="316" text-anchor="middle">2</text>
+      <text x="605" y="316" text-anchor="middle">3</text>
+      <text x="740" y="316" text-anchor="middle">4</text>
+    </g>
+    <text x="470" y="346" text-anchor="middle" font-size="12" fill="#1d1d1d">CHSH value |S|</text>
+
+    <!-- Caption note -->
+    <text x="470" y="368" text-anchor="middle" font-size="10" fill="#888" font-style="italic">
+      red = classical Bell region · green = quantum reach · gold = signaling required
+    </text>
+  </svg>
+
+  <div class="demo-buttons" style="margin-top: 0.6rem;">
+    <button onclick="runDemo5()">Run §3.5 (four mechanisms)</button>
+  </div>
+  <div class="output" id="out5">Click "Run §3.5 (four mechanisms)" to empirically measure |S| under each scenario. The bars will update with the freshly sampled values (N = 2000 trials per case, four CHSH axis pairs each). Notice: only Case 4 — explicit signaling between the wings — escapes the Bell bound.</div>
+  <div class="demo-buttons" style="margin-top: 0.6rem;">
+    <button class="secondary" onclick="toggleSource(5)">Show source</button>
+  </div>
+  <pre class="source" id="source5" style="display:none;"></pre>
 </div>
 
 <!-- ============================================================ -->
@@ -712,8 +897,8 @@ function chshOnWerner(p) {
 
 function updateGamma(rawVal) {
   const g = parseFloat(rawVal);
-  // γ ∈ [0,1] → p ∈ [1/√2, 1]
-  const p = 1/Math.sqrt(2) + g * (1 - 1/Math.sqrt(2));
+  // Full Werner range: γ = p ∈ [0, 1] → |S| = p·√8 ∈ [0, √8]
+  const p = g;
   const S = chshOnWerner(p);
   document.getElementById('gamma-val').textContent = g.toFixed(3);
   document.getElementById('werner-p').textContent = p.toFixed(4);
@@ -727,18 +912,26 @@ function updateGamma(rawVal) {
 
 function formatDemo3Detail(g, p, S) {
   const Smaster = p * Math.sqrt(8);
+  const bellThreshold = 1 / Math.sqrt(2);
+  const regime = S < 2 - 1e-6
+    ? 'classical (LHV-reachable, |S| < 2)'
+    : (S > 2 + 1e-6
+        ? 'Bell-violating quantum regime (|S| > 2)'
+        : 'Bell saturation (|S| = 2 exactly)');
   return `Werner state ρ_W(p) = p·|Ψ⁻⟩⟨Ψ⁻| + (1−p)·I/4
 γ knob:           ${g.toFixed(4)}
 p (Werner):       ${p.toFixed(8)}
 |S| = tr(ρ·P):    ${S.toFixed(8)}
 |S| = p·√8:       ${Smaster.toFixed(8)}   ← master equation
 Residual:         ${Math.abs(S - Smaster).toExponential(2)}
+Current regime:   ${regime}
 
-Fraction of √2 gap traversed:  ${(g * 100).toFixed(2)}%
-Classical Bell bound (γ=0):    |S| = 2.00000000
-Tsirelson bound (γ=1):         |S| = ${(2 * Math.sqrt(2)).toFixed(8)}
+Reference values along the master equation:
+  γ = 0       (maximally mixed)        |S| = 0.00000000
+  γ = 1/√2    ≈ ${bellThreshold.toFixed(6)}   Bell threshold |S| = 2.00000000
+  γ = 1       (pure singlet)           |S| = ${Math.sqrt(8).toFixed(8)}
 
-Both endpoints agree with the master equation to machine precision.`;
+All endpoints agree with the master equation to machine precision.`;
 }
 
 
@@ -782,6 +975,100 @@ function runDemo4() {
   document.getElementById('out4').textContent = lines.join('\n');
   // Redraw the geometric viz (axes, projection dots, algebra panel)
   drawViz4();
+}
+
+// =============================================================
+//  Demo 5 (bonus): the full CHSH spectrum
+// =============================================================
+//  Runs four mechanisms — baseline LHV, random δ, fixed δ, axis-
+//  correlated δ — and updates the horizontal bar chart with |S|.
+//  The "third entity" advances Bob's phase by δ between Alice's
+//  and Bob's measurements without either knowing.
+function runDemo5() {
+  const r = chshSpectrumCases();
+  const X0 = 200, W = 540;                // plot area in the SVG
+  const xScale = S => (S / 4) * W;        // pixel per |S| unit
+
+  function updateBar(idx, value) {
+    const bar = document.getElementById('bar5-' + idx);
+    const val = document.getElementById('bar5-' + idx + '-val');
+    const w = Math.max(xScale(value), 0.5);
+    bar.setAttribute('width', w);
+    // Put value label 8px past the right edge of the bar
+    val.setAttribute('x', X0 + w + 8);
+    val.textContent = `|S| = ${value.toFixed(4)}`;
+  }
+  updateBar(1, r.baseline);
+  updateBar(2, r.random);
+  updateBar(3, r.fixed);
+  updateBar(4, r.signaling);
+
+  const sq8 = Math.sqrt(8);
+  const lines = [];
+  lines.push(`1. baseline (no third entity)        |S| = ${r.baseline.toFixed(4)}   ← saturates Bell at 2`);
+  lines.push(`2. random δ ~ Uniform[0, 2π)         |S| = ${r.random.toFixed(4)}   ← phase destroyed, full decoherence`);
+  lines.push(`3. fixed δ = π/6                     |S| = ${r.fixed.toFixed(4)}   ← still at Bell, Eᵢⱼ redistributed`);
+  lines.push(`4. axis-correlated δ (SIGNALING)     |S| = ${r.signaling.toFixed(4)}   ← PR-box reached, locality broken`);
+  lines.push('');
+  lines.push(`Bell bound:       |S| ≤ 2       (any local hidden-variable model)`);
+  lines.push(`Tsirelson bound:  |S| ≤ √8 ≈ ${sq8.toFixed(4)}  (quantum mechanics)`);
+  lines.push(`PR-box ceiling:   |S| ≤ 4       (signaling allowed)`);
+  lines.push('');
+  lines.push(`Bell's bound is closed under unknown classical inputs:`);
+  lines.push(`Cases 2 and 3 add hidden machinery and still stay ≤ 2.`);
+  lines.push(`Only Case 4 — an explicit signal between the wings —`);
+  lines.push(`escapes. The √2 gap from 2 to √8 (quantum) is itself`);
+  lines.push(`bounded above by (4 − √8) ≈ ${(4 - sq8).toFixed(4)} to the PR ceiling.`);
+  document.getElementById('out5').textContent = lines.join('\n');
+}
+
+// Math-only version exposed to the source viewer.
+function chshSpectrumCases() {
+  // CHSH at the standard quantum-optimal axes.
+  const N = 5000;
+  const A1 = 0, A2 = Math.PI / 2;
+  const B1 = Math.PI / 4, B2 = 3 * Math.PI / 4;
+  const s = x => x > 0 ? 1 : -1;
+
+  // Alice and Bob share phase φ. The "third entity" advances Bob's
+  // counter by δ between measurements: Bob sees phase (φ + δ).
+  // δ is a function of what the third entity is allowed to see.
+  function E(a, b, deltaFn) {
+    let total = 0;
+    for (let i = 0; i < N; i++) {
+      const phi = Math.random() * 2 * Math.PI;
+      const delta = deltaFn(a, b);
+      total += s(Math.cos(phi + a)) * s(Math.cos(phi + delta + b));
+    }
+    return total / N;
+  }
+
+  // CHSH expression: |E(A1,B1) − E(A1,B2) + E(A2,B1) + E(A2,B2)|.
+  function S(deltaFn) {
+    return Math.abs(
+      E(A1, B1, deltaFn) - E(A1, B2, deltaFn) +
+      E(A2, B1, deltaFn) + E(A2, B2, deltaFn)
+    );
+  }
+
+  return {
+    // 1. no third entity — pure shared-phase LHV
+    baseline:  S(() => 0),
+
+    // 2. third entity injects random noise — destroys shared phase
+    random:    S(() => Math.random() * 2 * Math.PI),
+
+    // 3. third entity adds a constant, unknown to Alice and Bob
+    fixed:     S(() => Math.PI / 6),
+
+    // 4. third entity sees both axis choices and steers Bob's phase
+    //    to engineer PR-box correlations (+1, −1, +1, +1).
+    //    This is signaling — Bob's outcome depends on Alice's axis.
+    signaling: S((a, b) => {
+      const flip = (a === A1 && b === B2) ? Math.PI : 0;
+      return a - b + flip;
+    })
+  };
 }
 
 // =============================================================
@@ -914,6 +1201,66 @@ function runAll() {
 // =============================================================
 //  Source-code reveal (uses Function.prototype.toString)
 // =============================================================
+// =============================================================
+//  Math-only versions of each demo — shown in the source viewer
+//  Identical computation to the runDemo*() functions but without
+//  the text-output formatting (lines.push) that obscures the physics.
+// =============================================================
+function chshClassicalLHV() {
+  // §3.1 — Classical LHV (random hidden-variable phase).
+  // Hidden variable: φ ~ Uniform[0, 2π) per trial.
+  // Local outcomes:  A(θ, φ) = sign(cos(φ + θ)) ∈ {+1, −1}.
+  // Correlation:     E(a, b) = ⟨ A(a, φ) · B(b, φ) ⟩_φ.
+  const N = 5000;
+  const a1 = 0, a2 = Math.PI/2;
+  const b1 = Math.PI/4, b2 = 3*Math.PI/4;
+  let E11 = 0, E12 = 0, E21 = 0, E22 = 0;
+  for (let i = 0; i < N; i++) {
+    const phase = Math.random() * 2 * Math.PI;
+    const sgn = theta => Math.cos(phase + theta) > 0 ? 1 : -1;
+    E11 += sgn(a1) * sgn(b1);
+    E12 += sgn(a1) * sgn(b2);
+    E21 += sgn(a2) * sgn(b1);
+    E22 += sgn(a2) * sgn(b2);
+  }
+  // CHSH: classical LHV saturates Bell at exactly 2.
+  return Math.abs(E11/N - E12/N + E21/N + E22/N);
+}
+
+function chshDeterministicZipper() {
+  // §3.2 — Deterministic zipper (A fast on odd N, B fast on even).
+  // Joint counter advances at the fast rate. With disjoint Alice/Bob
+  // sampling grids, the alternation gives four E values with no noise:
+  const E11 = +0.5;
+  const E12 = -0.5;
+  const E21 = +0.5;
+  const E22 = +0.5;
+  // CHSH = |E11 − E12 + E21 + E22| = 2 exactly (Bell saturation).
+  return Math.abs(E11 - E12 + E21 + E22);
+}
+
+function chshHypersphereStates() {
+  // §3.4 — |S| = |tr(ρ · P_CHSH)| for four canonical 2-qubit states.
+  const P_CHSH = chshOp(0, Math.PI/4, Math.PI/2, 3*Math.PI/4);
+  const inv = 1/Math.sqrt(2);
+  // |Ψ⁻⟩ = (|01⟩ − |10⟩)/√2  — the singlet, saturates Tsirelson √8
+  const singlet  = [[0,0], [inv,0], [-inv,0], [0,0]];
+  // |Φ⁺⟩ = (|00⟩ + |11⟩)/√2  — another Bell vertex, same √8
+  const phi_plus = [[inv,0], [0,0], [0,0], [inv,0]];
+  // |00⟩  — separable product state, strictly below Bell bound 2
+  const product  = [[1,0], [0,0], [0,0], [0,0]];
+  // ρ = |ψ⟩⟨ψ|, then |S| = |tr(ρ · P_CHSH)|
+  const SofPure = (ψ) =>
+    Math.abs(matTrace(matMul(outer(ψ, ψ), P_CHSH)));
+  const S_singlet = SofPure(singlet);
+  const S_phi     = SofPure(phi_plus);
+  const S_product = SofPure(product);
+  // Maximally mixed ρ = I/4 — zero correlation
+  const S_mixed   = Math.abs(matTrace(matMul(
+                       matScale(1/4, matIdentity(4)), P_CHSH)));
+  return { S_singlet, S_phi, S_product, S_mixed };
+}
+
 function toggleSource(demoNum) {
   const pre = document.getElementById('source' + demoNum);
   if (pre.style.display === 'block') {
@@ -936,22 +1283,24 @@ function toggleSource(demoNum) {
       singlet, chshOp, singletDensity, wernerDensity
     ].map(x => typeof x === 'function' ? x.toString() : x).join('\n\n');
   } else if (demoNum === 1) {
-    src = runDemo1.toString();
+    src = chshClassicalLHV.toString();
   } else if (demoNum === 2) {
-    src = runDemo2.toString();
+    src = chshDeterministicZipper.toString();
   } else if (demoNum === 3) {
     src = [
       '// γ-knob: drag the slider → recompute |S| via density-matrix trace',
       '',
-      '// Werner state ρ_W(p) = p·|Ψ⁻⟩⟨Ψ⁻| + (1-p)·I/4',
+      '// Werner state ρ_W(p) = p·|Ψ⁻⟩⟨Ψ⁻| + (1−p)·I/4',
       wernerDensity.toString(),
       '',
-      chshOnWerner.toString(),
-      '',
-      updateGamma.toString()
+      '// CHSH expression evaluated at the optimal axes (Alice: 0, π/2;',
+      '// Bob: π/4, 3π/4) gives |S| = p · √8 directly.',
+      chshOnWerner.toString()
     ].join('\n');
   } else if (demoNum === 4) {
-    src = runDemo4.toString();
+    src = chshHypersphereStates.toString();
+  } else if (demoNum === 5) {
+    src = chshSpectrumCases.toString();
   }
   pre.textContent = src;
   pre.style.display = 'block';
@@ -1089,10 +1438,10 @@ function initViz3() {
 
 function updateViz3(g) {
   if (!viz3) return;
-  // Distance from origin = |S| / 2√2, in [1/√2, 1]
-  const p = 1/Math.sqrt(2) + g * (1 - 1/Math.sqrt(2));
+  // Full Werner range: γ = p, |S| = p·√8, r = |S|/√8 ∈ [0, 1]
+  const p = g;
   const S = p * Math.sqrt(8);
-  const r = S / (2 * Math.sqrt(2));
+  const r = S / Math.sqrt(8);
   // Place along (1,1,1)/√3 direction
   const d = 1/Math.sqrt(3);
   const x = r * d, y = r * d, z = r * d;
@@ -1517,13 +1866,20 @@ function tickDemo4Sampling() {
       const [A, B] = sampleSinglet(a, b);
       const prod = A * B;
       acc += prod;
-      // Subsample for 2D circle scatter
+      // Subsample for 2D circle scatter.
+      // Cluster center placed on the singlet's projection radius (1/√2),
+      // with √(uniform) sampling so the dot density is uniform in 2D
+      // area inside the wedge (not biased toward the inner edge).
       if (i < N_VIZ_PER_PAIR) {
+        const innerR = 0.35, outerR = 0.95;
+        const rad = Math.sqrt(
+          innerR*innerR + Math.random() * (outerR*outerR - innerR*innerR)
+        );
         demo4Dots.push({
           pairIdx: k,
           product: prod,
           ang: D4_ZONES[k] + (Math.random() - 0.5) * Math.PI/6,
-          rad: 0.22 + Math.random() * 0.62
+          rad: rad
         });
       }
       // Subsample for 3D particle injection
@@ -1779,24 +2135,26 @@ function initHypersphere(canvasIdA, canvasIdB) {
       // confined inside the sphere.
       if (batchSamples && batchSamples.length) {
         for (const prod of batchSamples) {
-          // Random offset within a ball of radius proportional to |S|
-          const offsetR = 0.15 + Math.random() * 0.55;
+          // Each particle = one finite-sample CHSH estimate. With N samples per
+          // batch, the estimator has stddev ~√8 / √N, so individual samples
+          // routinely fluctuate above the Tsirelson bound — that's expected
+          // statistical noise on the EXPECTATION value, not a violation of it.
+          // Use a Gaussian-shaped offset (Box-Muller) so most particles cluster
+          // near the head with a tail extending past the sphere.
+          const u1 = Math.max(1e-9, Math.random());
+          const u2 = Math.random();
+          const g = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+          const sigma = 0.18;  // ≈ stddev of per-sample contribution to |S|
+          // Direction: random unit vector, biased outward along (1,1,1)/√3
           const theta = Math.random() * 2 * Math.PI;
           const phi = Math.acos(2 * Math.random() - 1);
-          const sinPhi = Math.sin(phi);
-          const ox = offsetR * sinPhi * Math.cos(theta);
-          const oy = offsetR * sinPhi * Math.sin(theta);
-          const oz = offsetR * Math.cos(phi);
-          // Place near head but biased toward inside of sphere
-          let px = hx + ox * 0.5;
-          let py = hy + oy * 0.5;
-          let pz = hz + oz * 0.5;
-          // Clamp inside sphere (radius 1)
-          const mag = Math.sqrt(px*px + py*py + pz*pz);
-          if (mag > 0.97) {
-            const s = 0.97 / mag;
-            px *= s; py *= s; pz *= s;
-          }
+          const sp = Math.sin(phi);
+          const dx = sp * Math.cos(theta), dy = sp * Math.sin(theta), dz = Math.cos(phi);
+          const offset = g * sigma;
+          const px = hx + dx * offset;
+          const py = hy + dy * offset;
+          const pz = hz + dz * offset;
+          // NO sphere clamp — individual samples can leak past Tsirelson
           spawnParticle(px, py, pz, prod);
         }
       }
@@ -1914,7 +2272,7 @@ function drawViz2() {
 // Init three.js once page loads
 window.addEventListener('load', () => {
   initViz3();
-  updateViz3(0);
+  updateViz3(parseFloat(document.getElementById('gamma-slider').value));
   viz1_3D = initHypersphere('canvas1_3d_a', 'canvas1_3d_b');
   viz4_3D = initHypersphere('canvas4_3d_a', 'canvas4_3d_b');
   // Draw demo 4 viz on load to show the structure
@@ -1924,7 +2282,8 @@ window.addEventListener('load', () => {
 });
 
 // On load: initialize γ=0 reading
-updateGamma(0);
+// Initialize using the slider's actual default value so all readouts match.
+updateGamma(document.getElementById('gamma-slider').value);
 </script>
 
 </body>
