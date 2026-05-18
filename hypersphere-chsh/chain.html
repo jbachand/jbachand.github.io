@@ -179,6 +179,42 @@
   }
   .info-toggle:hover { color: var(--accent); border-color: var(--accent); }
 
+  .source-toggle {
+    width: 100%;
+    padding: 6px 0;
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    font-size: 0.74rem;
+    transition: all 0.15s;
+  }
+  .source-toggle:hover { color: var(--accent-soft); border-color: var(--accent); }
+  .source-block {
+    display: none;
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: Menlo, Monaco, monospace;
+    font-size: 0.7rem;
+    color: #c4d0dc;
+    line-height: 1.5;
+    white-space: pre;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 280px;
+  }
+  .source-block.show { display: block; }
+  .source-block .com { color: #8895a5; font-style: italic; }
+  .source-block .kw { color: #ffaa44; }
+  .source-block .str { color: #aacc88; }
+  .source-block .fn { color: #ffdd99; }
+
   @media (max-width: 720px) {
     .panel {
       top: 8px;
@@ -236,7 +272,7 @@
     </label>
     <input type="range" id="n-slider" min="0" max="100" step="0.1" value="0" oninput="updateN(this.value)">
     <div class="slider-ticks">
-      <span>3</span><span>30</span><span>300</span><span>3 000</span><span>30 000</span>
+      <span>3</span><span>30</span><span>300</span><span>3 000</span><span>∞</span>
     </div>
     <button class="play-button" id="play-btn" onclick="togglePlay()">▶ Animate slider</button>
   </div>
@@ -259,6 +295,50 @@
       <div class="stat-val" id="phase-display">scattered</div>
     </div>
   </div>
+
+  <button class="source-toggle" id="source-toggle" onclick="toggleSource()">&lt;/&gt; Show chain internals</button>
+  <pre class="source-block" id="source-block"><span class="com">// The tiny "chain" that produces what you see.
+// Each particle is a uniform sample on the unit n-sphere S^(n−1),
+// projected to first 3 coordinates and rendered on S² (the visible
+// sphere).  As n grows, the projection concentrates on the equator
+// perpendicular to the projection axis.</span>
+
+<span class="kw">function</span> <span class="fn">gaussian</span>() {
+  <span class="com">// Box-Muller — standard normal sample</span>
+  <span class="kw">const</span> u = Math.random(), v = Math.random();
+  <span class="kw">return</span> Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+<span class="kw">function</span> <span class="fn">sampleLatitude</span>(n) {
+  <span class="com">// Returns u₁ where u is uniform on S^(n−1).
+  //   exact:       u₁ = g₁ / √(g₁² + g₂² + … + gₙ²)
+  //   asymptotic:  u₁ ≈ 𝒩(0, 1/n)  for n large
+  //   limit:       u₁ = 0 at n = ∞ (the equator)</span>
+  <span class="kw">if</span> (n === Infinity) <span class="kw">return</span> 0;
+  <span class="kw">if</span> (n &lt;= 60) {
+    <span class="kw">let</span> sum = 0;
+    <span class="kw">const</span> g1 = <span class="fn">gaussian</span>();
+    sum = g1 * g1;
+    <span class="kw">for</span> (<span class="kw">let</span> i = 1; i &lt; n; i++) {
+      <span class="kw">const</span> g = <span class="fn">gaussian</span>();
+      sum += g * g;
+    }
+    <span class="kw">return</span> g1 / Math.sqrt(sum);
+  }
+  <span class="kw">return</span> <span class="fn">gaussian</span>() / Math.sqrt(n);
+}
+
+<span class="kw">function</span> <span class="fn">placeOnSphere</span>(n) {
+  <span class="com">// One particle: pick latitude from the n-sphere projection,
+  // longitude uniform on [0, 2π).  Render at unit radius.</span>
+  <span class="kw">const</span> sinT = <span class="fn">sampleLatitude</span>(n);
+  <span class="kw">const</span> cosT = Math.sqrt(1 - sinT * sinT);
+  <span class="kw">const</span> phi  = Math.random() * 2 * Math.PI;
+  <span class="kw">return</span> [cosT * Math.cos(phi), sinT, cosT * Math.sin(phi)];
+}
+
+<span class="com">// Equator concentration: σ(u₁) = 1/√n.  At n = ∞, σ = 0,
+// all 2000 particles collapse exactly onto the orange equator line.</span></pre>
 </div>
 
 <div class="legend">
@@ -390,7 +470,10 @@ function gaussian() {
   return Math.sqrt(-2 * Math.log(Math.max(u, 1e-12))) * Math.cos(2 * Math.PI * v);
 }
 function sampleLatitude(n) {
+  // n = ∞ limit: every coordinate collapses to 0 exactly.
+  if (n === Infinity) return 0;
   if (n <= 60) {
+    // Exact: u_1 = g_1 / sqrt(g_1² + g_2² + ... + g_n²)
     let sum = 0;
     const g1 = gaussian();
     sum = g1 * g1;
@@ -400,6 +483,7 @@ function sampleLatitude(n) {
     }
     return g1 / Math.sqrt(sum);
   } else {
+    // Asymptotic: sum-of-squares ≈ n by LLN, so u_1 ~ N(0, 1/n)
     const z = gaussian() / Math.sqrt(n);
     return Math.max(-1, Math.min(1, z));
   }
@@ -436,8 +520,10 @@ function updateParticles(n) {
 //  Slider → n (log scale, slider [0, 100] → n [3, 30000])
 // =============================================================
 function sliderToN(s) {
-  // s in [0, 100].  n = 3 * (30000/3)^(s/100) = 3 * 10000^(s/100).
+  // s in [0, 100].  Last step (s = 100) is n = ∞ exactly; otherwise
+  // log-scale: n = 3 * 10000^(s/100).
   const t = parseFloat(s) / 100;
+  if (t >= 1) return Infinity;
   const n = Math.round(3 * Math.pow(10000, t));
   return Math.max(3, n);
 }
@@ -447,25 +533,29 @@ function updateN(sliderVal) {
   const n = sliderToN(sliderVal);
   currentN = n;
   document.getElementById('n-display').textContent =
+    n === Infinity ? '∞' :
     n >= 10000 ? (n/1000).toFixed(1) + 'k' : n.toLocaleString();
 
-  const sigma = 1 / Math.sqrt(n);
-  document.getElementById('sigma-display').textContent = sigma.toFixed(4);
-  document.getElementById('bandwidth-display').textContent = (2 * sigma).toFixed(4);
+  const sigma = n === Infinity ? 0 : 1 / Math.sqrt(n);
+  document.getElementById('sigma-display').textContent =
+    n === Infinity ? '0' : sigma.toFixed(4);
+  document.getElementById('bandwidth-display').textContent =
+    n === Infinity ? '0' : (2 * sigma).toFixed(4);
 
   const concentration = updateParticles(n);
   document.getElementById('concentration-display').textContent =
     (concentration * 100).toFixed(1);
 
   let phase = 'scattered';
-  if (n >= 10 && n < 50)        phase = 'thinning';
-  else if (n >= 50 && n < 500)  phase = 'concentrating';
-  else if (n >= 500 && n < 5000)phase = 'narrow band';
-  else if (n >= 5000)           phase = 'equatorial';
+  if (n === Infinity)              phase = 'equator (limit)';
+  else if (n >= 10 && n < 50)      phase = 'thinning';
+  else if (n >= 50 && n < 500)     phase = 'concentrating';
+  else if (n >= 500 && n < 5000)   phase = 'narrow band';
+  else if (n >= 5000)              phase = 'equatorial';
   document.getElementById('phase-display').textContent = phase;
 
-  // Band height = 2σ (clamped for visibility at small n)
-  const bandH = Math.min(2 * sigma, 1.6);
+  // Band height = 2σ (clamped at small n, hidden at ∞)
+  const bandH = n === Infinity ? 0.001 : Math.min(2 * sigma, 1.6);
   bandMesh.scale.set(1, bandH, 1);
 }
 
@@ -562,6 +652,16 @@ function toggleInfo() {
   btn.textContent = panel.classList.contains('expanded')
     ? '× Hide explanation'
     : 'ⓘ What is this?';
+}
+
+// Toggle the source-code block
+function toggleSource() {
+  const block = document.getElementById('source-block');
+  const btn = document.getElementById('source-toggle');
+  block.classList.toggle('show');
+  btn.innerHTML = block.classList.contains('show')
+    ? '× Hide chain internals'
+    : '&lt;/&gt; Show chain internals';
 }
 
 // Optional URL param: ?n=<sliderVal in 0..100>  — sets initial slider state
