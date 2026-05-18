@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chain dimensions → equator</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: rgba(15, 20, 28, 0.88);
+    --border: #2a3340;
+    --accent: #ffaa44;
+    --accent-soft: #ffdd99;
+    --text: #e8e8e8;
+    --muted: #aab2bd;
+    --dim: #8895a5;
+    --highlight: #66ccff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow: hidden;
+    height: 100%;
+  }
+  canvas { display: block; }
+
+  .panel {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    max-width: 380px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10;
+  }
+  .panel h1 {
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+    color: var(--accent-soft);
+    font-weight: 600;
+  }
+  .panel .subtitle {
+    font-size: 0.75rem;
+    color: var(--dim);
+    margin: 0 0 10px;
+    font-style: italic;
+  }
+  .panel p {
+    margin: 6px 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .panel p .term { color: var(--accent); font-weight: 600; }
+  .panel p em { color: var(--text); font-style: italic; }
+
+  .controls {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .controls label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .controls label .n-readout {
+    font-family: Menlo, Monaco, monospace;
+    color: var(--accent-soft);
+    font-weight: 600;
+  }
+  .controls input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-family: Menlo, Monaco, monospace;
+    font-size: 0.65rem;
+    color: var(--dim);
+    margin-top: 2px;
+  }
+  .play-button {
+    margin-top: 8px;
+    width: 100%;
+    padding: 6px 0;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    font-size: 0.78rem;
+    transition: all 0.15s;
+  }
+  .play-button:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 12px;
+    font-family: Menlo, Monaco, monospace;
+  }
+  .stat {
+    background: rgba(30, 40, 55, 0.6);
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+  .stat-label {
+    color: var(--dim);
+    font-size: 0.66rem;
+    margin-bottom: 2px;
+    font-family: -apple-system, sans-serif;
+  }
+  .stat-val {
+    color: var(--accent-soft);
+    font-weight: 600;
+    font-size: 0.86rem;
+  }
+
+  .legend {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: rgba(15, 20, 28, 0.7);
+    padding: 8px 14px;
+    border-radius: 4px;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+  }
+  .legend strong { color: var(--accent); font-weight: 600; }
+  .legend .pole { color: var(--highlight); font-weight: 600; }
+
+  .link {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    font-size: 0.72rem;
+    color: var(--dim);
+    background: rgba(15, 20, 28, 0.7);
+    padding: 8px 14px;
+    border-radius: 4px;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+  }
+  .link a { color: var(--muted); text-decoration: none; }
+  .link a:hover { color: var(--accent-soft); }
+
+  @media (max-width: 720px) {
+    .panel { max-width: calc(100vw - 32px); padding: 10px 14px; }
+    .panel h1 { font-size: 0.95rem; }
+    .panel p { font-size: 0.74rem; }
+    .legend { font-size: 0.65rem; padding: 6px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <h1>Chain dimensions → equator</h1>
+  <div class="subtitle">π-universe · concentration of measure · drag the slider</div>
+  <p>
+    Each ramp of the π-chain adds geometric resolution to the underlying
+    trajectory. The shadow is a fixed-dimensional projection onto a
+    chosen direction. As chain depth grows, that projection
+    <span class="term">concentrates</span> — the cloud of possible
+    outputs collapses onto the <span class="term">equator</span>
+    perpendicular to the projection axis.
+  </p>
+  <p>
+    Math: a uniform point on S<sup>n−1</sup> has coordinate variance
+    <em>1/n</em>. As n → ∞, every coordinate → 0 in distribution. The
+    point lives on the equator with respect to <em>any</em> axis. This
+    is why the chain's 512-bit shadow stays fixed at any depth (Law 6,
+    Law 31): the trajectory grows, but its projection doesn't.
+  </p>
+
+  <div class="controls">
+    <label>
+      <span>Chain depth (dimensions)</span>
+      <span class="n-readout">n = <span id="n-display">3</span></span>
+    </label>
+    <input type="range" id="n-slider" min="0" max="100" step="0.1" value="0" oninput="updateN(this.value)">
+    <div class="slider-ticks">
+      <span>3</span><span>30</span><span>300</span><span>3 000</span><span>30 000</span>
+    </div>
+    <button class="play-button" id="play-btn" onclick="togglePlay()">▶ Animate slider</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">σ(latitude)</div>
+      <div class="stat-val"><span id="sigma-display">0.577</span></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">within ±0.1 of equator</div>
+      <div class="stat-val"><span id="concentration-display">10.0</span>%</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">band width (2σ)</div>
+      <div class="stat-val"><span id="bandwidth-display">1.15</span></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">regime</div>
+      <div class="stat-val" id="phase-display">scattered</div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <strong>orange line</strong> = equator (z = 0) ·
+  <strong>orange band</strong> = ±σ concentration region ·
+  <span class="pole">cyan dots</span> = poles ·
+  white dots = chain samples · drag to rotate, scroll to zoom
+</div>
+
+<div class="link">
+  <a href="index.html">← CHSH demo</a> · π-universe / Bachand 2026
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// =============================================================
+//  Scene
+// =============================================================
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0e14);
+
+const camera = new THREE.PerspectiveCamera(
+  60, window.innerWidth / window.innerHeight, 0.1, 100
+);
+camera.position.set(0, 1.0, 3.0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// =============================================================
+//  Sphere wireframe (subtle)
+// =============================================================
+const sphereGeom = new THREE.SphereGeometry(1.0, 36, 24);
+const sphereWire = new THREE.WireframeGeometry(sphereGeom);
+const sphereMat = new THREE.LineBasicMaterial({
+  color: 0x445566, transparent: true, opacity: 0.18
+});
+scene.add(new THREE.LineSegments(sphereWire, sphereMat));
+
+// =============================================================
+//  Equator (great circle at y = 0)
+// =============================================================
+const equatorPts = [];
+for (let i = 0; i <= 128; i++) {
+  const t = (i / 128) * Math.PI * 2;
+  equatorPts.push(new THREE.Vector3(1.003 * Math.cos(t), 0, 1.003 * Math.sin(t)));
+}
+const equatorGeom = new THREE.BufferGeometry().setFromPoints(equatorPts);
+const equatorMat = new THREE.LineBasicMaterial({ color: 0xffaa44, linewidth: 2 });
+scene.add(new THREE.Line(equatorGeom, equatorMat));
+
+// =============================================================
+//  Equatorial band (the ±σ "concentration zone")
+//  Cylinder: a slice of the sphere near y=0 is approximately a cylinder.
+// =============================================================
+const bandMat = new THREE.MeshBasicMaterial({
+  color: 0xffaa44, transparent: true, opacity: 0.10,
+  side: THREE.DoubleSide
+});
+const bandGeom = new THREE.CylinderGeometry(1.002, 1.002, 1, 64, 1, true);
+const bandMesh = new THREE.Mesh(bandGeom, bandMat);
+scene.add(bandMesh);
+
+// =============================================================
+//  Polar axis (subtle vertical line) and pole markers
+// =============================================================
+const axisPts = [
+  new THREE.Vector3(0, -1.25, 0),
+  new THREE.Vector3(0, 1.25, 0)
+];
+const axisGeom = new THREE.BufferGeometry().setFromPoints(axisPts);
+const axisMat = new THREE.LineBasicMaterial({
+  color: 0x556677, transparent: true, opacity: 0.4
+});
+scene.add(new THREE.Line(axisGeom, axisMat));
+
+function poleMarker(y) {
+  const g = new THREE.SphereGeometry(0.028, 16, 12);
+  const m = new THREE.MeshBasicMaterial({ color: 0x66ccff });
+  const mesh = new THREE.Mesh(g, m);
+  mesh.position.set(0, y, 0);
+  return mesh;
+}
+scene.add(poleMarker(1));
+scene.add(poleMarker(-1));
+
+// =============================================================
+//  Sample particles
+// =============================================================
+const N_SAMPLES = 2000;
+const positions = new Float32Array(N_SAMPLES * 3);
+const colors = new Float32Array(N_SAMPLES * 3);
+const particleGeom = new THREE.BufferGeometry();
+particleGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+particleGeom.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+const particleMat = new THREE.PointsMaterial({
+  size: 0.022,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.88,
+  sizeAttenuation: true
+});
+const particles = new THREE.Points(particleGeom, particleMat);
+scene.add(particles);
+
+// =============================================================
+//  Sampling math
+//
+//  For each particle: sample u uniform on S^(n-1), take u_1 as the
+//  "latitude coordinate" sin(θ).  Longitude φ is uniform on [0, 2π).
+//  Place the point on the visible S^2 at (cos θ cos φ, sin θ,
+//  cos θ sin φ).
+//
+//  For n ≤ 60: exact via Gaussian + normalize.
+//  For n  > 60: asymptotic u_1 ~ N(0, 1/n) (sum-of-squares concentrates
+//  around n by LLN; relative error < 0.5 % at n=60).
+// =============================================================
+function gaussian() {
+  const u = Math.random();
+  const v = Math.random();
+  return Math.sqrt(-2 * Math.log(Math.max(u, 1e-12))) * Math.cos(2 * Math.PI * v);
+}
+function sampleLatitude(n) {
+  if (n <= 60) {
+    let sum = 0;
+    const g1 = gaussian();
+    sum = g1 * g1;
+    for (let i = 1; i < n; i++) {
+      const g = gaussian();
+      sum += g * g;
+    }
+    return g1 / Math.sqrt(sum);
+  } else {
+    const z = gaussian() / Math.sqrt(n);
+    return Math.max(-1, Math.min(1, z));
+  }
+}
+
+function updateParticles(n) {
+  let withinBand = 0;
+  const arr = positions;
+  const col = colors;
+  for (let i = 0; i < N_SAMPLES; i++) {
+    const sinT = sampleLatitude(n);
+    const cosT = Math.sqrt(Math.max(0, 1 - sinT * sinT));
+    const phi = Math.random() * 2 * Math.PI;
+    arr[i*3+0] = cosT * Math.cos(phi);
+    arr[i*3+1] = sinT;
+    arr[i*3+2] = cosT * Math.sin(phi);
+
+    // Color by latitude: equator-ish = bright white/amber, poles = dim blue
+    const equator_dist = Math.abs(sinT);
+    const t = Math.min(1, equator_dist / 0.5);
+    // r=1 at equator → 0.6 at pole; g=0.95→0.7; b=0.85→1.0
+    col[i*3+0] = 1.0 - 0.4 * t;
+    col[i*3+1] = 0.95 - 0.25 * t;
+    col[i*3+2] = 0.85 + 0.15 * t;
+
+    if (equator_dist < 0.1) withinBand++;
+  }
+  particleGeom.attributes.position.needsUpdate = true;
+  particleGeom.attributes.color.needsUpdate = true;
+  return withinBand / N_SAMPLES;
+}
+
+// =============================================================
+//  Slider → n (log scale, slider [0, 100] → n [3, 30000])
+// =============================================================
+function sliderToN(s) {
+  // s in [0, 100].  n = 3 * (30000/3)^(s/100) = 3 * 10000^(s/100).
+  const t = parseFloat(s) / 100;
+  const n = Math.round(3 * Math.pow(10000, t));
+  return Math.max(3, n);
+}
+
+let currentN = 3;
+function updateN(sliderVal) {
+  const n = sliderToN(sliderVal);
+  currentN = n;
+  document.getElementById('n-display').textContent =
+    n >= 10000 ? (n/1000).toFixed(1) + 'k' : n.toLocaleString();
+
+  const sigma = 1 / Math.sqrt(n);
+  document.getElementById('sigma-display').textContent = sigma.toFixed(4);
+  document.getElementById('bandwidth-display').textContent = (2 * sigma).toFixed(4);
+
+  const concentration = updateParticles(n);
+  document.getElementById('concentration-display').textContent =
+    (concentration * 100).toFixed(1);
+
+  let phase = 'scattered';
+  if (n >= 10 && n < 50)        phase = 'thinning';
+  else if (n >= 50 && n < 500)  phase = 'concentrating';
+  else if (n >= 500 && n < 5000)phase = 'narrow band';
+  else if (n >= 5000)           phase = 'equatorial';
+  document.getElementById('phase-display').textContent = phase;
+
+  // Band height = 2σ (clamped for visibility at small n)
+  const bandH = Math.min(2 * sigma, 1.6);
+  bandMesh.scale.set(1, bandH, 1);
+}
+
+// =============================================================
+//  Animate slider (play button)
+// =============================================================
+let playing = false;
+let playStart = 0;
+const PLAY_DURATION = 12000; // 12 sec sweep
+function togglePlay() {
+  playing = !playing;
+  const btn = document.getElementById('play-btn');
+  if (playing) {
+    btn.textContent = '⏸ Pause';
+    playStart = performance.now() - (parseFloat(document.getElementById('n-slider').value) / 100) * PLAY_DURATION;
+  } else {
+    btn.textContent = '▶ Animate slider';
+  }
+}
+
+function tickPlay(t) {
+  if (!playing) return;
+  let progress = ((t - playStart) % PLAY_DURATION) / PLAY_DURATION;
+  // Ease out near max so the equator state holds for a beat
+  const slider = progress * 100;
+  document.getElementById('n-slider').value = slider;
+  updateN(slider);
+}
+
+// =============================================================
+//  Orbit-style mouse / touch controls
+// =============================================================
+let isDragging = false;
+let lastX = 0, lastY = 0;
+let rotY = 0.4, rotX = 0.25;
+
+function onDown(x, y) { isDragging = true; lastX = x; lastY = y; }
+function onMove(x, y) {
+  if (!isDragging) return;
+  const dx = x - lastX, dy = y - lastY;
+  rotY += dx * 0.006;
+  rotX += dy * 0.006;
+  rotX = Math.max(-Math.PI/2 + 0.08, Math.min(Math.PI/2 - 0.08, rotX));
+  lastX = x; lastY = y;
+}
+function onUp() { isDragging = false; }
+
+renderer.domElement.addEventListener('mousedown', e => onDown(e.clientX, e.clientY));
+window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+window.addEventListener('mouseup', onUp);
+renderer.domElement.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) { onDown(e.touches[0].clientX, e.touches[0].clientY); }
+}, { passive: true });
+renderer.domElement.addEventListener('touchmove', e => {
+  if (e.touches.length === 1) {
+    onMove(e.touches[0].clientX, e.touches[0].clientY);
+    e.preventDefault();
+  }
+}, { passive: false });
+renderer.domElement.addEventListener('touchend', onUp);
+renderer.domElement.addEventListener('wheel', e => {
+  e.preventDefault();
+  const f = 1 + (e.deltaY > 0 ? 0.08 : -0.08);
+  camera.position.multiplyScalar(f);
+  const r = camera.position.length();
+  if (r < 1.5) camera.position.setLength(1.5);
+  if (r > 8)   camera.position.setLength(8);
+}, { passive: false });
+
+function updateCamera() {
+  const r = camera.position.length();
+  camera.position.x = r * Math.cos(rotX) * Math.sin(rotY);
+  camera.position.y = r * Math.sin(rotX);
+  camera.position.z = r * Math.cos(rotX) * Math.cos(rotY);
+  camera.lookAt(0, 0, 0);
+}
+
+// =============================================================
+//  Main loop
+// =============================================================
+function animate(t) {
+  requestAnimationFrame(animate);
+  if (!isDragging && !playing) rotY += 0.0014;     // slow auto-rotate when idle
+  if (playing) tickPlay(t);
+  updateCamera();
+  renderer.render(scene, camera);
+}
+
+// Optional URL param: ?n=<sliderVal in 0..100>  — sets initial slider state
+const _params = new URLSearchParams(window.location.search);
+const _initSlider = Math.max(0, Math.min(100, parseFloat(_params.get('n') || '0')));
+document.getElementById('n-slider').value = _initSlider;
+updateN(_initSlider);
+animate(0);
+</script>
+</body>
+</html>
